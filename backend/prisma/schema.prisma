@@ -10,7 +10,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("locked-in.cx4uccioczna.us-east-1.rds.amazonaws.com:3306")
+  url      = env("DATABASE_ADMIN")
 }
 
 model User {
