@@ -1,5 +1,5 @@
 import express from 'express';
-import prisma from '../db/prisma.ts';
+import prisma from './prisma';
 
 const dotenv = require('dotenv');
 dotenv.config();

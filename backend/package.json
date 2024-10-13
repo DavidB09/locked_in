@@ -7,7 +7,6 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "ts-node src/index.ts",
     "build": "tsc",
-    "serve": "node dist/index.js",
     "postbuild": "chmod +x bin/postbuild.sh && ./bin/postbuild.sh"
   },
   "author": "",
