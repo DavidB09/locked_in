@@ -16,3 +16,11 @@ app.get('/', (req: express.Request, res: express.Response) => {
   res.status(200).send("Hello World!");
 });
 
+app.get('/users', async (req: express.Request, res: express.Response) => {
+    const users = await prisma.user.findMany();
+
+    const names = users.map(u => u.Username);
+
+    res.status(200).send(`The names are ${names.join(', ')}.`);
+})
+
