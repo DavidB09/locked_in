@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const prisma_1 = __importDefault(require("./prisma"));
 const dotenv = require('dotenv');
 dotenv.config();
 const app = (0, express_1.default)();
@@ -24,3 +25,8 @@ app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
 app.get('/', (req, res) => {
     res.status(200).send("Hello World!");
 });
+app.get('/users', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const users = yield prisma_1.default.user.findMany();
+    const names = users.map(u => u.Username);
+    res.status(200).send(`The names are ${names.join(', ')}.`);
+}));
