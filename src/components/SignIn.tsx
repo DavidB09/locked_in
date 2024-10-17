@@ -14,7 +14,7 @@ export default function SignIn () {
             <TextField id="password" label="Password" type="password" variant="outlined" size="small" />
             {/*For now*/}
             <Link className="react-link" to={"/home"}>
-            <Button color='primary' variant='contained'  sx={{margin: '10px 10px', borderRadius: '20px'}}>Log In</Button>
+                <Button color='primary' variant='contained'  sx={{margin: '10px 10px', borderRadius: '20px'}}>Log In</Button>
             </Link>
         </Box>
 

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/dashboard.css'
+import { Link } from 'react-router-dom';
 
 export default function Dashboard () {
 
@@ -26,7 +27,10 @@ export default function Dashboard () {
         <div className="divider" />
 
         <button className="sidebar-button">Account Settings</button>
-        <button className="sidebar-button">Sign out</button>
+        <Link className='react-link' to='/'>
+          <button className="sidebar-button">Sign out</button>
+        </Link>
+        
       </div>
 
       {/* Main Content */}
