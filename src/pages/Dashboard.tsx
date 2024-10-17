@@ -1,8 +1,18 @@
 import React, { useState } from 'react';
 import '../styles/dashboard.css'
 import { Link } from 'react-router-dom';
+import Search from '../components/SearchBar';
+import Websites from '../components/Websites';
 
 export default function Dashboard () {
+  const [search, setSearch] = useState<string>("");
+  const [websites, setWebsites] = useState<string[]>([]); //Get the list of websites from the db
+  
+  const searchFilter = (search : string, websites : string[]) => { //filter the display to show any website that matches current search
+    if (!search) { return websites; }
+    else {return websites.filter((website) => website.toLowerCase().includes(search))}
+  }
+  const displayCards = searchFilter(search, websites);
 
   return (
     <div className="container">
@@ -18,6 +28,9 @@ export default function Dashboard () {
 
         {/* Side buttons */}
         <button className="sidebar-button">
+        🌐 All Websites
+        </button>
+        <button className="sidebar-button">
           📁 Folders
         </button>
         <button className="sidebar-button">
@@ -27,41 +40,22 @@ export default function Dashboard () {
         <div className="divider" />
 
         <button className="sidebar-button">Account Settings</button>
-        <Link className='react-link' to='/'>
+        <Link to='/'>
           <button className="sidebar-button">Sign out</button>
         </Link>
-        
+
       </div>
 
       {/* Main Content */}
       <div className="main-content">
         <div className="header">
-          <h1>Website</h1>
-          <button className="close-button">✕</button>
+          <Search setSearch={setSearch}></Search>
         </div>
       
 
       {/*PLACEHOLDER */}
-        <div className="cards-container">
-          {/* Static placeholder cards */}
-          <div className="card">
-            <h3 className="site-name">Google</h3>
-            <div className="password-group">
-              <div className="input">************</div>
-              <button className="button">Copy Plain Text</button>
-              <button className="button">Reveal</button>
-            </div>
-          </div>
-
-          <div className="card">
-            <h3 className="site-name">Github</h3>
-            <div className="password-group">
-              <div className="input">************</div>
-              <button className="button">Copy Plain Text</button>
-              <button className="button">Reveal</button>
-            </div>
-          </div>
-        </div>
+      <Websites cards={displayCards}/>
+        
       </div>
     </div>
 

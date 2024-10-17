@@ -6,8 +6,8 @@ import SignUp from "../components/signup";
 
 
 export default function SignIn () {
-    const [logInSelect, setLogin] = useState(true);
-    const [SignUpSelect, setSignUp] = useState(false);
+    const [logInSelect, setLogin] = useState<boolean>(true);
+    const [SignUpSelect, setSignUp] = useState<boolean>(false);
 
     //Could be better
     const handleLogin = () => {
