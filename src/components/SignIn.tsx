@@ -10,7 +10,7 @@ export default function SignIn () {
             <Typography variant="h3">Sign In</Typography>
             <Typography variant="h6">Username</Typography>
             <TextField id="username" label="Username" type="text" variant="outlined" size="small"/>
-            <Typography variant="h6">Username</Typography>
+            <Typography variant="h6">Password</Typography>
             <TextField id="password" label="Password" type="password" variant="outlined" size="small" />
             {/*For now*/}
             <Link className="react-link" to={"/home"}>
