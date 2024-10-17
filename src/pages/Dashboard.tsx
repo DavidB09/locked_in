@@ -5,7 +5,6 @@ import Search from '../components/SearchBar';
 import Websites from '../components/Websites';
 
 export default function Dashboard () {
-  interfac
   const [search, setSearch] = useState<string>("");
   const [websites, setWebsites] = useState<string[]>([]); //Get the list of websites from the db
   
