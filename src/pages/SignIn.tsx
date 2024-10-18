@@ -1,8 +1,8 @@
 import { Grid2 } from "@mui/material";
 import { Box, Button} from "@mui/material";
 import { useState } from "react";
-import LogIn from "../components/login";
-import SignUp from "../components/signup";
+import LogIn from "../components/Login";
+import SignUp from "../components/Signup";
 
 
 export default function SignIn () {
