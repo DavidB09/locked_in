@@ -1,25 +1,8 @@
-# React + TypeScript + MUI
+# React + Vite
 
-Getting Started:
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-1. clone this repository
-2. git switch -c [whatever name you want to name your local branch] origin/test
-3. npm i
-4. npm run dev
+Currently, two official plugins are available:
 
-**Saving changes:**
-
-git add . 
-
-git commit . -m [WHAT I DID]
-
-**When pushing (uploading changes to repo) for the first time:**
-
-git push --set-upstream origin test
-
-**Pushing In General**
-
-git push origin [name_of_your_branch if needed (some machines)]
-
-Notes: whenever someone makes a change to the repo, you will have to   git pull  if you want those changes.
-If you want to just refresh the state, do: git fetch
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
