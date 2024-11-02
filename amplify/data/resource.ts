@@ -8,6 +8,21 @@ const schema = a.schema({
       image: a.string(),
     })
     .authorization((allow) => [allow.owner()]),
+  Password: a
+    .model({
+      hash: a.string(),
+      website: a.string(),
+      description: a.string(),
+      folderId: a.id(),
+      folder: a.belongsTo('Folder', 'folderId'),
+    })
+    .authorization((allow) => [allow.owner()]),
+  Folder: a
+    .model({
+      name: a.string(), 
+      passwords: a.hasMany('Password', 'folderId'),
+    })
+    .authorization((allow) => [allow.owner()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
