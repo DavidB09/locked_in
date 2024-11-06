@@ -1,4 +1,4 @@
-import { Box, Button, styled, TextField, TextFieldProps } from "@mui/material";
+import { Box, Button, styled, TextField} from "@mui/material";
 import { Link } from "react-router-dom";
 
 export default function LogIn (){

@@ -12,6 +12,7 @@
   "dependencies": {
     "@aws-amplify/ui-react": "^6.5.5",
     "aws-amplify": "^6.7.0",
+    "locked_in": "file:",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
