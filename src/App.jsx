@@ -6,6 +6,7 @@ import { getUrl } from "aws-amplify/storage";
 import { uploadData } from "aws-amplify/storage";
 import { generateClient } from "aws-amplify/data";
 import outputs from "../amplify_outputs.json";
+import imageLogo from './assets/logo.png';
 
 import Dashboard from './pages/Dashboard';
 
@@ -100,7 +101,7 @@ export default function App() {
       return (
         <div  style={{textAlign: "center"}}>
           <img
-            src="src/assets/logo.png"
+            src={imageLogo}
             style={{width: "50%", height: "50%"}}
           />
         </div>
