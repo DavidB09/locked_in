@@ -101,7 +101,7 @@ export default function App() {
         <div  style={{textAlign: "center"}}>
           <img
             alt="Our"
-            src="/src/assets/logol.png"
+            src="/public/logol.png"
             style={{width: "50%", height: "50%"}}
           />
         </div>
