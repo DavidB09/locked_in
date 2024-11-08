@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 
 import { AuthUser } from 'aws-amplify/auth';
 
@@ -66,9 +65,7 @@ export default function Dashboard ({ user }: Props) {
         <div className="divider" />
 
         <button className="sidebar-button">Account Settings</button>
-        <Link to='/'>
-          <button className="sidebar-button">Sign out</button>
-        </Link>
+        <button className="sidebar-button">Sign out</button>
 
       </div>
 
