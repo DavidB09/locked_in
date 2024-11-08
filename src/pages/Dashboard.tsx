@@ -15,9 +15,10 @@ const client = generateClient<Schema>();
 
 interface Props {
   user: AuthUser,
+  signOut: any,
 }
 
-export default function Dashboard ({ user }: Props) {
+export default function Dashboard ({ user, signOut }: Props) {
   const [search, setSearch] = useState<string>("");
   const [websites, setWebsites] = useState<string[]>([]); //Get the list of websites from the db
   
@@ -65,7 +66,7 @@ export default function Dashboard ({ user }: Props) {
         <div className="divider" />
 
         <button className="sidebar-button">Account Settings</button>
-        <button className="sidebar-button">Sign out</button>
+        <button className="sidebar-button" onClick={signOut}>Sign out</button>
 
       </div>
 

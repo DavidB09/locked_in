@@ -99,7 +99,7 @@ export default function App() {
     <Authenticator>
       {({ signOut, user }) => (
         <ThemeProvider theme={theme}>
-          <Dashboard user={user} />
+          <Dashboard user={user} signOut={signOut} />
         </ThemeProvider>
       )}
     </Authenticator>
