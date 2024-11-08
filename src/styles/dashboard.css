@@ -1,0 +1,171 @@
+.container {
+  display: flex;
+  height: 100vh;
+  background-color: #1a1a1a;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #153042;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #4a5568;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #4a5568;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.user-role {
+  margin: 0;
+  font-size: 14px;
+  color: #a0aec0;
+}
+
+.sidebar-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  background-color: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  font-size: 20px;
+}
+
+.sidebar-button:hover {
+  background-color: #4a5568;
+}
+
+.divider {
+  height: 1px;
+  background-color: #4a5568;
+  margin: 16px 0;
+}
+
+.main-content {
+  flex: 1;
+  background-color: #21435a;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 600px;
+  margin: 0 auto 24px;
+}
+
+.close-button {
+  background-color: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 8px;
+  font-size: 20px;
+}
+
+.close-button:hover {
+  color: white;
+}
+
+.cards-container {
+  padding: 0 24px 24px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.card {
+  background-color: white;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  color: #1a1a1a;
+}
+
+.site-name {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.password-group {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+  background-color: #f8f9fa;
+  color: #4a5568;
+}
+
+.button {
+  padding: 8px 16px;
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #4a5568;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.button:hover {
+  background-color: #f8f9fa;
+  border-color: #cbd5e0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    height: auto;
+  }
+
+  .password-group {
+    flex-direction: column;
+  }
+
+  .button {
+    width: 100%;
+  }
+
+            
+}
