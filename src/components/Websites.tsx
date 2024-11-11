@@ -1,4 +1,4 @@
-
+import React from 'react';
 
 export default function Websites ({cards}) {
     //Do the query here to dynamically display cards that have "site-name" == card in cards

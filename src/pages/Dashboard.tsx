@@ -1,10 +1,24 @@
-import React, { useState } from 'react';
-import '../styles/dashboard.css'
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+
+import { AuthUser } from 'aws-amplify/auth';
+
 import Search from '../components/SearchBar';
 import Websites from '../components/Websites';
 
-export default function Dashboard () {
+import '../styles/dashboard.css'
+
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '../../amplify/data/resource';
+type Folder = Schema['Folder']['type'];
+
+const client = generateClient<Schema>();
+
+interface Props {
+  user: AuthUser,
+  signOut: any,
+}
+
+export default function Dashboard ({ user, signOut }: Props) {
   const [search, setSearch] = useState<string>("");
   const [websites, setWebsites] = useState<string[]>([]); //Get the list of websites from the db
   
@@ -13,6 +27,18 @@ export default function Dashboard () {
     else {return websites.filter((website) => website.toLowerCase().includes(search))}
   }
   const displayCards = searchFilter(search, websites);
+
+  const [folders, setFolders] = useState<Folder[]>([]);
+
+  useEffect(() => {
+    fetchFolders();
+  }, []);
+
+  async function fetchFolders() {
+    const { data: folders } = await client.models.Folder.list({ authMode: 'userPool' });
+    console.log(folders);
+    setFolders(folders);
+  }
 
   return (
     <div className="container">
@@ -40,9 +66,7 @@ export default function Dashboard () {
         <div className="divider" />
 
         <button className="sidebar-button">Account Settings</button>
-        <Link to='/'>
-          <button className="sidebar-button">Sign out</button>
-        </Link>
+        <button className="sidebar-button" onClick={signOut}>Sign out</button>
 
       </div>
 
