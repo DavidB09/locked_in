@@ -22,6 +22,7 @@ interface Props {
 export default function Dashboard ({ user, signOut }: Props) {
   const [search, setSearch] = useState<string>("");
   const [websites, setWebsites] = useState<string[]>([]); //Get the list of websites from the db
+  const [folders, setFolders] = useState<Folder[]>([]);
   
   const searchFilter = (search : string, websites : string[]) => { //filter the display to show any website that matches current search
     if (!search) { return websites; }
@@ -29,8 +30,7 @@ export default function Dashboard ({ user, signOut }: Props) {
   }
   const displayCards = searchFilter(search, websites);
 
-  const [folders, setFolders] = useState<Folder[]>([]);
-
+  //These two belong in the Folders component
   useEffect(() => {
     fetchFolders();
   }, []);
@@ -41,16 +41,18 @@ export default function Dashboard ({ user, signOut }: Props) {
     setFolders(folders);
   }
 
-  async function createPassword(sitename) {
-    const { errors, data: newPassword } = await client.models.Password.create({
+  //Should the newPass be encrypted already or it needs to be when we send it?
+  async function createPassword(sitename: string, description: string, newPass: string) {
+    const { errors} = await client.models.Password.create({
       website: sitename,
-      description: sitename, 
-      folderId: "General",
+      description: description,
+      folderId: "General"
     })
 
-    return newPassword;
+    return errors; //if any, that is, "Was this successful?"
   }
 
+  //Probably can safely delete?
   // async function changePasswordFolder(sitename, folderId) {
   //   const {data: newFolder } = await client.models.Folder.get(folderId);
 
@@ -87,6 +89,8 @@ export default function Dashboard ({ user, signOut }: Props) {
         <button className="sidebar-button" onClick={fetchFolders}>
           📁 Folders
         </button>
+        {/* CreateFolder should actually be onSubmit on a form/input not onClick */}
+        {/* Should move AddFolder/Website to their respective page components: that is, Folders and Websites */}
         <button className="sidebar-button" onClick={createFolder}>
           ➕ Add Folder
         </button>
