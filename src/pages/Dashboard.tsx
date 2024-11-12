@@ -10,6 +10,7 @@ import '../styles/dashboard.css'
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../amplify/data/resource';
 type Folder = Schema['Folder']['type'];
+type Password = Schema['Password']['type'];
 
 const client = generateClient<Schema>();
 
@@ -40,6 +41,33 @@ export default function Dashboard ({ user, signOut }: Props) {
     setFolders(folders);
   }
 
+  async function createPassword(sitename) {
+    const { errors, data: newPassword } = await client.models.Password.create({
+      website: sitename,
+      description: sitename, 
+      folderId: "General",
+    })
+
+    return newPassword;
+  }
+
+  // async function changePasswordFolder(sitename, folderId) {
+  //   const {data: newFolder } = await client.models.Folder.get(folderId);
+
+  //   await client.models.Password.update({
+  //     folderId: folderId,
+  //     folder: newFolder?.name,
+  //   })
+  // }
+  
+  async function createFolder(folderName) {
+    
+    const { errors, data: newFolder } = await client.models.Folder.create({
+      name: folderName
+    })
+
+    return newFolder;
+  }
   return (
     <div className="container">
       {/* Sidebar */}
@@ -56,11 +84,11 @@ export default function Dashboard ({ user, signOut }: Props) {
         <button className="sidebar-button">
         🌐 All Websites
         </button>
-        <button className="sidebar-button">
+        <button className="sidebar-button" onClick={fetchFolders}>
           📁 Folders
         </button>
-        <button className="sidebar-button">
-          ➕ Add Website
+        <button className="sidebar-button" onClick={createFolder}>
+          ➕ Add Folder
         </button>
 
         <div className="divider" />
