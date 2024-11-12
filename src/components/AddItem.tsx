@@ -26,13 +26,13 @@ export default function Add ({fill, inFolder, handler}: addProps) {
                     </IconButton>
                 </Box>
                 <Typography variant="h6">Folder: </Typography>
-                <OutlinedInput size="small" label="newFolder" value={fill} readOnly={inFolder}></OutlinedInput>
+                <OutlinedInput size="small" required label="newFolder" value={fill} readOnly={inFolder}></OutlinedInput>
                 <Typography variant="h6">Website: </Typography>
-                <OutlinedInput size="small" label="newWebsite"></OutlinedInput>
+                <OutlinedInput size="small" required label="newWebsite"></OutlinedInput>
                 <Typography variant="h6">Password: </Typography>
-                <OutlinedInput size="small" type="password" label="newPassword"></OutlinedInput>
+                <OutlinedInput size="small" required type="password" label="newPassword"></OutlinedInput>
                 <Box display={"flex"} justifyContent={"right"} padding={"10px"}>
-                    <Button variant="contained" color="secondary">Submit</Button>
+                    <Button variant="contained" color="secondary" onClick={handleSubmit}>Submit</Button>
                 </Box>
             </Paper>
         </>
