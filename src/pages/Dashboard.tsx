@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 
 import { AuthUser } from 'aws-amplify/auth';
 
-import Search from '../components/SearchBar';
 import Websites from '../components/Websites';
+import Folders from '../components/Folders';
 
 import '../styles/dashboard.css'
 
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../amplify/data/resource';
+import Add from '../components/AddItem';
+
 type Folder = Schema['Folder']['type'];
 type Password = Schema['Password']['type'];
 
@@ -20,21 +22,25 @@ interface Props {
 }
 
 export default function Dashboard ({ user, signOut }: Props) {
-  const [search, setSearch] = useState<string>("");
-  const [websites, setWebsites] = useState<string[]>([]); //Get the list of websites from the db
+  // const [search, setSearch] = useState<string>("");
+  // const [websites, setWebsites] = useState<string[]>([]); //Get the list of websites from the db
   const [folders, setFolders] = useState<Folder[]>([]);
-  
-  const searchFilter = (search : string, websites : string[]) => { //filter the display to show any website that matches current search
-    if (!search) { return websites; }
-    else {return websites.filter((website) => website.toLowerCase().includes(search))}
-  }
-  const displayCards = searchFilter(search, websites);
+  const [view, setView] = useState<number>(0)
+  const [form, openForm] = useState<boolean>(false)
+  // const searchFilter = (search : string, websites : string[]) => { //filter the display to show any website that matches current search
+  //   if (!search) { return websites; }
+  //   else {return websites.filter((website) => website.toLowerCase().includes(search))}
+  // }
+  // const displayCards = searchFilter(search, websites);
 
-  //These two belong in the Folders component
+  const elements = [<Websites list={folders} handleForm={openForm}/>, <Folders list={folders} handleForm={openForm}/> ]
+  
   useEffect(() => {
     fetchFolders();
+    setView(0);
   }, []);
 
+  //We can pass folders to the Folder component for them to render ACTUAL folders, and parse the folders for website_card details 
   async function fetchFolders() {
     const { data: folders } = await client.models.Folder.list({ authMode: 'userPool' });
     console.log(folders);
@@ -83,17 +89,14 @@ export default function Dashboard ({ user, signOut }: Props) {
         </div>
 
         {/* Side buttons */}
-        <button className="sidebar-button">
+        <button className="sidebar-button" onClick={() => setView(0)}>
         🌐 All Websites
         </button>
-        <button className="sidebar-button" onClick={fetchFolders}>
+        <button className="sidebar-button" onClick={() => setView(1)}>
           📁 Folders
         </button>
         {/* CreateFolder should actually be onSubmit on a form/input not onClick */}
         {/* Should move AddFolder/Website to their respective page components: that is, Folders and Websites */}
-        <button className="sidebar-button" onClick={createFolder}>
-          ➕ Add Folder
-        </button>
 
         <div className="divider" />
 
@@ -101,18 +104,8 @@ export default function Dashboard ({ user, signOut }: Props) {
         <button className="sidebar-button" onClick={signOut}>Sign out</button>
 
       </div>
-
-      {/* Main Content */}
-      <div className="main-content">
-        <div className="header">
-          <Search setSearch={setSearch}></Search>
-        </div>
-      
-
-      {/*PLACEHOLDER */}
-      <Websites cards={displayCards}/>
-        
-      </div>
+      {elements[view]}
+      {form ? <Add handler={openForm}/> : null}
     </div>
 
 

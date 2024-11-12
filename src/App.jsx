@@ -29,7 +29,7 @@ export default function App() {
         main: '#153042'
       },
       secondary: { 
-          main: '#3D789F',
+          main: '#21435A',
           light: '#58AAE1'
       },
     }
