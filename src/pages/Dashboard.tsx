@@ -1,24 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
-import { AuthUser } from 'aws-amplify/auth';
+import { fetchUserAttributes, signOut, type FetchUserAttributesOutput } from 'aws-amplify/auth';
 
 import Websites from '../components/Websites';
 import Folders from '../components/Folders';
+
+import { NotificationContext, NotificationModal, NotificationType } from '../components/NotificationModal';
 
 import '../styles/dashboard.css'
 
 import { generateClient } from 'aws-amplify/data';
 import { type Schema } from '../../amplify/data/resource';
 import { CircularProgress } from '@mui/material';
+import AccountSettings from '../components/AccountSettings';
 type Folder = Schema['Folder']['type'];
 type Password = Schema['Password']['type'];
 
 const client = generateClient<Schema>();
-
-interface Props {
-    user: AuthUser,
-    signOut: any,
-}
 
 enum PageOptions {
     Websites,
@@ -26,7 +24,7 @@ enum PageOptions {
     Settings,
 }
 
-export default function Dashboard ({ user, signOut }: Props) {
+export default function Dashboard () {
     const [passwords, setPasswords] = useState<Password[]>([]);
     const [folders, setFolders] = useState<Folder[]>([]);
     const [view, setView] = useState<PageOptions>(PageOptions.Websites);
@@ -34,12 +32,29 @@ export default function Dashboard ({ user, signOut }: Props) {
     const [loadingFolders, setLoadingFolders] = useState<boolean>(false);
     const [loadingPasswords, setLoadingPasswords] = useState<boolean>(false);
 
+    const [userAttributes, setUserAttributes] = useState<FetchUserAttributesOutput|null>();
+
+    const { setNotification } = useContext(NotificationContext);
+
     useEffect(() => {
+        fetchUserInfo();
         fetchFolders();
         fetchPasswords();
     }, []);
 
-    //We can pass folders to the Folder component for them to render ACTUAL folders, and parse the folders for website_card details 
+    async function fetchUserInfo() {
+        try {
+            fetchUserAttributes().then(result => {
+                setUserAttributes(result);
+            });
+        } catch (err) {
+            setNotification({
+                type: NotificationType.Warning,
+                msg: 'User attributes where not loaded, please try again'
+            });
+        }
+    }
+
     async function fetchFolders() {
         try {
             setLoadingFolders(true);
@@ -58,8 +73,10 @@ export default function Dashboard ({ user, signOut }: Props) {
                 }
             })
         } catch (err) {
-            /* TODO add user warning */
-            console.log("ERROR fetching folders", err);
+            setNotification({
+                type: NotificationType.Warning,
+                msg: 'Folders where not loaded, please try again'
+            });
             setLoadingFolders(false);
         }
     }
@@ -76,8 +93,10 @@ export default function Dashboard ({ user, signOut }: Props) {
                 setLoadingPasswords(false);
             })
         } catch (err) {
-            /* TODO add user warning */
-            console.log("ERROR fetching passwords");
+            setNotification({
+                type: NotificationType.Warning,
+                msg: 'Passwords where not loaded, please try again'
+            });
             setLoadingPasswords(false);
         }
     }
@@ -87,10 +106,13 @@ export default function Dashboard ({ user, signOut }: Props) {
             {/* Sidebar */}
             <div className="sidebar">
                 <div className="profile-section">
-                    <div className="avatar">JD</div>
+                    <div className="avatar">
+                        {userAttributes?.preferred_username?.at(0) || userAttributes?.email?.at(0) || ''}
+                    </div>
                     <div>
-                        <h2 className="user-name">Jane Doe</h2>
-                        <p className="user-role">Default User</p>
+                        <h2 className="user-name">
+                            {userAttributes?.preferred_username || userAttributes?.email || ''}
+                        </h2>
                     </div>
                 </div>
 
@@ -104,8 +126,15 @@ export default function Dashboard ({ user, signOut }: Props) {
 
                 <div className="divider" />
 
-                <button className="sidebar-button">Account Settings</button>
-                <button className="sidebar-button" onClick={signOut}>Sign out</button>
+                <button className="sidebar-button" onClick={() => setView(PageOptions.Settings)}>
+                    Account Settings
+                </button>
+                <button 
+                    className="sidebar-button" 
+                    onClick={async () => await signOut({ global: true })}
+                >
+                    Sign Out
+                </button>
             </div>
 
             {
@@ -123,7 +152,6 @@ export default function Dashboard ({ user, signOut }: Props) {
                     updatePasswords={fetchPasswords}
                 />
             }
-
             {
                 (!loadingFolders && !loadingPasswords) && view === PageOptions.Folders &&
                 <Folders 
@@ -131,6 +159,15 @@ export default function Dashboard ({ user, signOut }: Props) {
                     updateFolders={fetchFolders}
                 /> 
             }
+            {
+                view === PageOptions.Settings &&
+                <AccountSettings 
+                    currUsername={userAttributes?.preferred_username}
+                    handleUpdate={fetchUserInfo}
+                />
+            }
+
+            <NotificationModal />
         </div>
     )
 }

@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
+import React, { useState } from 'react';
+
 import { Authenticator } from "@aws-amplify/ui-react";
 import { Amplify } from "aws-amplify";
 import "@aws-amplify/ui-react/styles.css";
-import { getUrl } from "aws-amplify/storage";
-import { uploadData } from "aws-amplify/storage";
 import { generateClient } from "aws-amplify/data";
 import outputs from "../amplify_outputs.json";
 import imageLogo from './assets/logo.png';
 
 import Dashboard from './pages/Dashboard';
+import { NotificationContext, Notification } from "./components/NotificationModal";
 
 import { createTheme, ThemeProvider } from "@mui/material";
 
@@ -48,6 +48,8 @@ export default function App() {
       );
     },
   }
+
+  const [notification, setNotification] = useState<Notification>({});
 
   //   const { tokens } = useTheme();
   // const theme = {
@@ -90,10 +92,12 @@ export default function App() {
   // };
 
   return (
-    <Authenticator components={components}>
-      {({ signOut, user }) => (
+    <Authenticator components={components} signUpAttributes={['preferred_username']}>
+      {() => (
         <ThemeProvider theme={theme}>
-          <Dashboard user={user} signOut={signOut} />
+          <NotificationContext.Provider value={{notification, setNotification}}>
+            <Dashboard />
+          </NotificationContext.Provider>
         </ThemeProvider>
       )}
     </Authenticator>

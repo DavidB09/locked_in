@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 import { 
     Box, 
@@ -10,6 +10,8 @@ import {
 
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../amplify/data/resource';
+
+import { NotificationContext, NotificationType } from '../components/NotificationModal';
 
 const client = generateClient<Schema>();
 
@@ -35,6 +37,8 @@ export default function FolderForm({showModal, handleClose}: addProps) {
     const [nameError, setNameError] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
 
+    const { setNotification } = useContext(NotificationContext);
+
     async function handleSubmit() {
         console.log(name);
         if (!name.length) {
@@ -47,10 +51,18 @@ export default function FolderForm({showModal, handleClose}: addProps) {
                 }).then(() => {
                     handleClose(true);
                     setLoading(false);
+                    setName("");
+                    
+                    setNotification({
+                        type: NotificationType.Success,
+                        msg: 'Folder was saved!'
+                    });
                 });
             } catch (err) {
-                /* TODO WARN USER */
-                console.log("ERROR saving folder");
+                setNotification({
+                    type: NotificationType.Warning,
+                    msg: 'Folder was not saved, please try again'
+                });
                 setLoading(false);
             }
         }

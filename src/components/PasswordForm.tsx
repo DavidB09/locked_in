@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 
 import { 
     Box, 
@@ -8,6 +8,8 @@ import {
     Modal, 
     TextField
 } from "@mui/material";
+
+import { NotificationContext, NotificationType } from '../components/NotificationModal';
 
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../amplify/data/resource';
@@ -46,6 +48,8 @@ export default function PasswordForm({showModal, handleClose, folderOptions, ini
 
     const [loading, setLoading] = useState<boolean>(false);
 
+    const { setNotification } = useContext(NotificationContext);
+
     async function handleSubmit() {
         console.log(website, password, description, folder);
         if (!website.length) {
@@ -68,10 +72,20 @@ export default function PasswordForm({showModal, handleClose, folderOptions, ini
                 }).then(() => {
                     handleClose(true);
                     setLoading(false);
+                    setWebsite("");
+                    setPassword("");
+                    setDescription("");
+                    setFolder(initFolder);
+                    setNotification({
+                        type: NotificationType.Success,
+                        msg: 'Password was saved!'
+                    });
                 });
             } catch (err) {
-                /* TODO WARN USER */
-                console.log("ERROR saving password");
+                setNotification({
+                    type: NotificationType.Warning,
+                    msg: 'Password was not saved, please try again'
+                });
                 setLoading(false);
             }
         }
