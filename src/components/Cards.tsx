@@ -61,9 +61,10 @@ export default function Card({name, username, description, pwd, folder, selectUp
             <div className="password-group">
                 <OutlinedInput 
                     size='small' 
+                    type={reveal ? 'text' : 'password'} 
                     value={pwd} 
                     readOnly={true}
-                    sx={{bgcolor: "#f6f6f6"}} 
+                    sx={{bgcolor: "#f6f6f6"}}
                 />
                 <IconButton onClick={handleVisibility}>
                     {reveal ? <VisibilityOff/>: <Visibility/>}
@@ -74,7 +75,7 @@ export default function Card({name, username, description, pwd, folder, selectUp
                     onMouseLeave={() => setCopy(false)}
                 >
                     {copied ? <CheckIcon sx={{color: "green"}}/> : "Copy"}
-                </button>  
+                </button>
             </div>
             <div className="password-group">
                 <FormControl>
