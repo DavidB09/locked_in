@@ -6,50 +6,94 @@ import {
     Paper, 
     Grid2,
     Typography,
-    Button
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CreateIcon from '@mui/icons-material/Create';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
-//import FolderIcon from '../assets/folder.png'
 
+import FolderIcon from '../assets/folder.png'
 import Card from './Cards';
-
-import type { Schema } from '../../amplify/data/resource';
 import PasswordForm from './PasswordForm';
 import FolderForm from "./FolderForm";
+
+import type { Schema } from '../../amplify/data/resource';
+import DeleteForm from "./DeleteForm";
 type Folder = Schema['Folder']['type'];
 type Password = Schema['Password']['type'];
 
 interface Props {
     folderList: Folder[],
+    passwordList: Password[],
     updateFolders: () => void,
+    updatePasswords: () => void,
 }
 
-export default function Folders({folderList, updateFolders} : Props){
+export default function Folders({folderList, passwordList, updateFolders, updatePasswords} : Props){
     const [folders, setFolders] = useState<Folder[]>([]);
     const [passwords, setPasswords] = useState<Password[]>([]);
+    const [folderOpen, setFolderOpen] = useState<boolean>(false)
+
+    const [currFolder, setCurrFolder] = useState<Folder|undefined>();
+    const [folderPasswords, setFolderPasswords] = useState<Password[]>([]);
+
     const [showFolderForm, setShowFolderForm] = useState<boolean>(false);
+    const [showDeleteFolder, setShowDeleteFolder] = useState<boolean>(false);
 
-
-    const [folderOpen, setOpen] = useState<boolean>(false)
-    const [folderWebsites, setFolder] = useState<Folder[]>([])
-
-    const handleOpenFolder = ((label) => {
-        setOpen(true)
-        //Set folderwebsites to all all websites within that folder
-    })
+    const [currPassword, setCurrPassword] = useState<Password|undefined>();
+    const [showPasswordForm, setShowPasswordForm] = useState<boolean>(false);
+    const [showDeletePassword, setShowDeletePassword] = useState<boolean>(false);
 
     useEffect(() => {
-        setOpen(false);
         setFolders(folderList);
-    }, [folderList]);
+        setPasswords(passwordList);
+    }, [folderList, passwordList]);
+
+    function handleOpenFolder(folder: Folder) {
+        setFolderOpen(true);
+        setCurrFolder(folder);
+        setFolderPasswords(passwords.filter(p => p.folderId === folder.id));
+    }
+
+    function handleCloseFolder() {
+        setFolderOpen(false);
+        setCurrFolder(undefined);
+        setFolderPasswords([]);
+    }
 
     function handleFolderFormSubmit(update?: boolean) {
         if (update) {
             updateFolders();
         }
         setShowFolderForm(false);
+        setCurrFolder(undefined);
+    }
+
+    function handleDeleteFolderSubmit(update?: boolean) {
+        if (update) {
+            updateFolders();
+            updatePasswords();
+        }
+        setShowDeleteFolder(false);
+        setCurrFolder(undefined);
+    }
+
+    function handlePasswordFormSubmit(update?: boolean) {
+        if (update) {
+            handleCloseFolder();
+            updatePasswords();
+        }
+        setShowPasswordForm(false);
+        setCurrPassword(undefined);
+    }
+
+    function handleDeletePasswordSubmit(update?: boolean) {
+        if (update) {
+            handleCloseFolder();
+            updatePasswords();
+        }
+        setShowDeletePassword(false);
+        setCurrPassword(undefined);
     }
 
     return (
@@ -65,19 +109,36 @@ export default function Folders({folderList, updateFolders} : Props){
                         margin={"5vh 0 10px 0"} 
                         columnGap={"1vw"}
                     >
-                        <IconButton onClick={() => setOpen(false)} sx={{bgcolor: "#153042", margin: "0 auto"}}>
+                        <IconButton onClick={handleCloseFolder} sx={{bgcolor: "#153042", margin: "0 auto"}}>
                             <ArrowLeftIcon fontSize='small' sx={{color: "white"}}/>
                         </IconButton>
-                        <IconButton sx={{bgcolor: "#153042"}}>
+                        <IconButton sx={{bgcolor: "#153042"}} onClick={() => setShowPasswordForm(true)}>
                             <AddIcon fontSize='small' sx={{color: "white"}}/>
                         </IconButton>
-                        <IconButton sx={{bgcolor: "#153042"}}>
-                            <DeleteIcon fontSize='small' sx={{color: "white"}}/>
-                        </IconButton>
                     </Box>
-                    {/* //Map folderwebsites and generate respective card */}
                     <div className="cards-container">
-                        <Card name={"test"} pwd={"awliwoqweoqowi3"}/>    
+                        {
+                            folderPasswords.length ? 
+                                folderPasswords.map((password) => (
+                                    <Card 
+                                        key={password.id} 
+                                        name={password.website!}
+                                        username={password.username!}
+                                        pwd={password.hash!}
+                                        description={password.description!}
+                                        folder={currFolder?.name!}
+                                        selectUpdate={() => {
+                                            setCurrPassword(password);
+                                            setShowPasswordForm(true);
+                                        }}
+                                        selectDelete={() => {
+                                            setCurrPassword(password);
+                                            setShowDeletePassword(true);
+                                        }}
+                                    />
+                                ))
+                                : <p>No websites found</p>
+                        }
                     </div>
                 </>
                 :
@@ -93,30 +154,54 @@ export default function Folders({folderList, updateFolders} : Props){
                         <IconButton onClick={() => setShowFolderForm(true)} sx={{bgcolor: "#153042"}}>
                             <AddIcon fontSize='small' sx={{color: "white"}}/>
                         </IconButton>
-                        <IconButton sx={{bgcolor: "#153042"}}>
-                            <DeleteIcon fontSize='small' sx={{color: "white"}}/>
-                        </IconButton>
                     </Box>
                     <Grid2 container spacing={2} margin={"0 10%"}>
                         {
                             folders.map(folder => (
-                                <Button key={folder.id} onClick={handleOpenFolder}>
-                                    <Paper elevation={5} sx={{width:"25vh", height: "25vh", bgcolor: "#21435A"}}>
+                                <Box key={folder.id} sx={{ cursor: 'pointer' }}>
+                                    <Paper elevation={5} sx={{width:"25vh", height: "30vh", bgcolor: "#21435A"}}>
                                         <Box sx={{display: "flex", justifyContent: "center"}}>
-                                        {/*<img src={FolderIcon}
-                                        style={{height:"20vh", width:"20vh", objectFit: "contain"}}></img>*/}
+                                            <IconButton
+                                                sx={{bgcolor: "#153042"}}
+                                                onClick={() => {
+                                                    setCurrFolder(folder);
+                                                    setShowFolderForm(true);
+                                                }}
+                                            >
+                                                <CreateIcon fontSize='small' sx={{color: "white"}}/>
+                                            </IconButton>
+                                            <IconButton 
+                                                sx={{bgcolor: "#153042"}}
+                                                onClick={() => {
+                                                    setCurrFolder(folder);
+                                                    setShowDeleteFolder(true);
+                                                }}
+                                            >
+                                                <DeleteIcon fontSize='small' sx={{color: "white"}}/>
+                                            </IconButton>
                                         </Box>
-                                        <Typography 
-                                            variant="h6" 
-                                            display={"block"} 
-                                            textAlign={"center"} 
-                                            textTransform={"none"} 
-                                            color="white"
+                                        <Box 
+                                            sx={{display: "flex", flexDirection: 'column', justifyContent: "center"}}
+                                            onClick={() => {
+                                                handleOpenFolder(folder);
+                                            }}
                                         >
-                                            {folder.name}
-                                        </Typography>
+                                            <img 
+                                                src={FolderIcon}
+                                                style={{height:"20vh", width:"20vh", objectFit: "contain"}} 
+                                            />
+                                            <Typography 
+                                                variant="h6" 
+                                                display={"block"} 
+                                                textAlign={"center"} 
+                                                textTransform={"none"} 
+                                                color="white"
+                                            >
+                                                {folder.name}
+                                            </Typography>
+                                        </Box>
                                     </Paper> 
-                                </Button>
+                                </Box>
                             ))
                         }
                     </Grid2>
@@ -124,8 +209,31 @@ export default function Folders({folderList, updateFolders} : Props){
             }
 
             <FolderForm
-                showModal={showFolderForm} 
+                showModal={showFolderForm}
+                currFolder={currFolder}
                 handleClose={handleFolderFormSubmit}
+            />
+
+            <PasswordForm 
+                showModal={showPasswordForm} 
+                handleClose={handlePasswordFormSubmit}
+                currPassword={currPassword!}
+                folders={folders}
+                initFolder={currFolder?.id!}
+            />
+
+            <DeleteForm
+                showModal={showDeletePassword}
+                currEntity={currPassword!}
+                isFolder={false}
+                handleClose={handleDeletePasswordSubmit}
+            />
+
+            <DeleteForm
+                showModal={showDeleteFolder}
+                currEntity={currFolder!}
+                isFolder={true}
+                handleClose={handleDeleteFolderSubmit}
             />
         </div>
     )

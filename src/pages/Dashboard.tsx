@@ -43,62 +43,56 @@ export default function Dashboard () {
     }, []);
 
     async function fetchUserInfo() {
-        try {
-            fetchUserAttributes().then(result => {
-                setUserAttributes(result);
-            });
-        } catch (err) {
+        fetchUserAttributes().then(result => {
+            setUserAttributes(result);
+        }).catch(() => {
             setNotification({
                 type: NotificationType.Warning,
                 msg: 'User attributes where not loaded, please try again'
             });
-        }
+        });
     }
 
     async function fetchFolders() {
-        try {
-            setLoadingFolders(true);
+        setLoadingFolders(true);
 
-            client.models.Folder.list({ authMode: 'userPool' }).then(result => {
-                const { data: folders } = result; 
-                console.log(folders);
+        client.models.Folder.list({ authMode: 'userPool' }).then(result => {
+            const { data: folders } = result; 
+            console.log(folders);
 
-                if (folders.length === 0) {
-                    client.models.Folder.create({
-                        name: "General",
-                    }).then(() => fetchFolders());
-                } else {
-                    setFolders(folders);
-                    setLoadingFolders(false);
-                }
-            })
-        } catch (err) {
+            if (folders.length === 0) {
+                client.models.Folder.create({
+                    name: "General",
+                }).then(() => fetchFolders());
+            } else {
+                setFolders(folders);
+                setLoadingFolders(false);
+            }
+        }).catch(() => {
             setNotification({
                 type: NotificationType.Warning,
-                msg: 'Folders where not loaded, please try again'
+                msg: 'Folders were not loaded, please try again'
             });
             setLoadingFolders(false);
-        }
+        });
     }
 
     async function fetchPasswords() {
-        try {
-            setLoadingPasswords(true);
+        setLoadingPasswords(true);
 
-            client.models.Password.list({ authMode: 'userPool' }).then(result => {
-                const { data: passwords } = result;
-                console.log(passwords);
+        client.models.Password.list({ authMode: 'userPool' }).then(result => {
+            const { data: passwords } = result;
+            console.log(passwords);
 
-                setPasswords(passwords);
-                setLoadingPasswords(false);
-            })
-        } catch (err) {
+            setPasswords(passwords);
+            setLoadingPasswords(false);
+        }).catch(() => {
             setNotification({
                 type: NotificationType.Warning,
-                msg: 'Passwords where not loaded, please try again'
+                msg: 'Passwords were not loaded, please try again'
             });
             setLoadingPasswords(false);
-        }
+        });
     }
 
     return (
@@ -156,6 +150,8 @@ export default function Dashboard () {
                 (!loadingFolders && !loadingPasswords) && view === PageOptions.Folders &&
                 <Folders 
                     folderList={folders} 
+                    passwordList={passwords}
+                    updatePasswords={fetchPasswords}
                     updateFolders={fetchFolders}
                 /> 
             }

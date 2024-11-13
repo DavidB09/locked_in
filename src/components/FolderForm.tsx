@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { 
     Box, 
@@ -7,6 +7,7 @@ import {
     Modal, 
     TextField
 } from "@mui/material";
+import { Folder } from "@mui/icons-material";
 
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../amplify/data/resource';
@@ -14,9 +15,11 @@ import type { Schema } from '../../amplify/data/resource';
 import { NotificationContext, NotificationType } from '../components/NotificationModal';
 
 const client = generateClient<Schema>();
+type Folder = Schema['Folder']['type'];
 
 interface addProps {
     showModal: boolean,
+    currFolder?: Folder,
     handleClose: (update?: boolean) => void,
 }
 
@@ -32,20 +35,44 @@ const style = {
     p: 4,
 };
 
-export default function FolderForm({showModal, handleClose}: addProps) {
+export default function FolderForm({showModal, currFolder, handleClose}: addProps) {
     const [name, setName] = useState<string>("");
     const [nameError, setNameError] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
 
     const { setNotification } = useContext(NotificationContext);
 
+    useEffect(() => {
+        if (currFolder) setName(currFolder.name!)
+    }, [currFolder])
+
     async function handleSubmit() {
-        console.log(name);
         if (!name.length) {
             setNameError(true);
         } else {
-            try {
-                setLoading(true);
+            setLoading(true);
+
+            if (currFolder) {
+                client.models.Folder.update({
+                    id: currFolder.id,
+                    name: name,
+                }).then(() => {
+                    handleClose(true);
+                    setLoading(false);
+                    setName("");
+                    
+                    setNotification({
+                        type: NotificationType.Success,
+                        msg: 'Folder was saved!'
+                    });
+                }).catch(() => {
+                    setNotification({
+                        type: NotificationType.Warning,
+                        msg: 'Folder was not saved, please try again'
+                    });
+                    setLoading(false);
+                });
+            } else {
                 client.models.Folder.create({
                     name: name
                 }).then(() => {
@@ -57,13 +84,13 @@ export default function FolderForm({showModal, handleClose}: addProps) {
                         type: NotificationType.Success,
                         msg: 'Folder was saved!'
                     });
-                });
-            } catch (err) {
-                setNotification({
-                    type: NotificationType.Warning,
-                    msg: 'Folder was not saved, please try again'
-                });
-                setLoading(false);
+                }).catch(() => {
+                    setNotification({
+                        type: NotificationType.Warning,
+                        msg: 'Folder was not saved, please try again'
+                    });
+                    setLoading(false);
+                })
             }
         }
     }
@@ -71,9 +98,13 @@ export default function FolderForm({showModal, handleClose}: addProps) {
     return (
         <Modal 
             open={showModal}
-            onClose={() => handleClose()}
-            aria-labelledby="modal-modal-password"
-            aria-describedby="modal-modal-password-form"
+            onClose={() => {
+                handleClose();
+                setName("");
+                setNameError(false);
+            }}
+            aria-labelledby="modal-modal-folder"
+            aria-describedby="modal-modal-folder-form"
         >
             <Box sx={style}>
                 <TextField
@@ -82,6 +113,7 @@ export default function FolderForm({showModal, handleClose}: addProps) {
                     helperText="Requires input"
                     error={nameError}
                     required
+                    value={name}
                     onChange={(e) => {
                         setName(e.target.value)
                         setNameError(false);

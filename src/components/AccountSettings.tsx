@@ -40,61 +40,49 @@ export default function AccountSettings({currUsername, handleUpdate}: Props) {
         }
 
         if (currPassword.length && newPassword.length) {
-            try {
-                setLoadingPassword(true);
-                updatePassword({
-                    oldPassword: currPassword,
-                    newPassword: newPassword,
-                }).then(() => {
-                    setLoadingPassword(false);
-                    setCurrPassword("");
-                    setNewPassword("");
-                    setNotification({
-                        type: NotificationType.Success,
-                        msg: 'New password was saved!'
-                    });
-                }).catch(err => {
-                    setNotification({
-                        type: NotificationType.Warning,
-                        msg: 'Error updating password, please make sure you match your current password'
-                    });
-                    console.log("HELLO? ERROR?")
-                    setLoadingPassword(false);
-                })
-            } catch (err) {
+            setLoadingPassword(true);
+            updatePassword({
+                oldPassword: currPassword,
+                newPassword: newPassword,
+            }).then(() => {
+                setLoadingPassword(false);
+                setCurrPassword("");
+                setNewPassword("");
+                setNotification({
+                    type: NotificationType.Success,
+                    msg: 'New password was saved!'
+                });
+            }).catch(() => {
                 setNotification({
                     type: NotificationType.Warning,
                     msg: 'Error updating password, please make sure you match your current password'
                 });
-                console.log("HELLO? ERROR?")
                 setLoadingPassword(false);
-            }
+            });
         }
     }
 
     async function handleUsernameSubmit() {
-        try {
-            setLoadingUsername(true);
+        setLoadingUsername(true);
 
-            updateUserAttributes({
-                userAttributes: {
-                    preferred_username: username
-                }
-            }).then(() => {
-                setLoadingUsername(false);
-                handleUpdate();
-                setNotification({
-                    type: NotificationType.Success,
-                    msg: 'Username was updated!'
-                });
+        updateUserAttributes({
+            userAttributes: {
+                preferred_username: username
+            }
+        }).then(() => {
+            setLoadingUsername(false);
+            handleUpdate();
+            setNotification({
+                type: NotificationType.Success,
+                msg: 'Username was updated!'
             });
-        } catch(err) {
+        }).catch(() => {
             setNotification({
                 type: NotificationType.Warning,
                 msg: 'Username failed to update, please try again'
             });
             setLoadingUsername(false);
-        }
+        });
     }
 
     return (
