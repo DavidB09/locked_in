@@ -74,6 +74,8 @@
   flex: 1;
   background-color: #21435a;
   position: relative;
+  height: 100vh;
+  overflow: auto;
 }
 
 .header {
