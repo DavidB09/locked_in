@@ -50,7 +50,7 @@ export default function Dashboard () {
         } catch (err) {
             setNotification({
                 type: NotificationType.Warning,
-                msg: 'User attributes where not loaded, please try again'
+                msg: 'User attributes were not loaded, please try again'
             });
         }
     }
@@ -75,7 +75,7 @@ export default function Dashboard () {
         } catch (err) {
             setNotification({
                 type: NotificationType.Warning,
-                msg: 'Folders where not loaded, please try again'
+                msg: 'Folders were not loaded, please try again'
             });
             setLoadingFolders(false);
         }
@@ -95,7 +95,7 @@ export default function Dashboard () {
         } catch (err) {
             setNotification({
                 type: NotificationType.Warning,
-                msg: 'Passwords where not loaded, please try again'
+                msg: 'Passwords were not loaded, please try again'
             });
             setLoadingPasswords(false);
         }
