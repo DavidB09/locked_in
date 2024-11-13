@@ -39,11 +39,13 @@ const style = {
 
 export default function PasswordForm({showModal, handleClose, folderOptions, initFolder}: addProps) {
     const [website, setWebsite] = useState<string>("");
+    const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [description, setDescription] = useState<string>("");
     const [folder, setFolder] = useState<string|null>(initFolder);
 
     const [websiteError, setWebsiteError] = useState<boolean>(false);
+    const [usernameError, setUsernameError] = useState<boolean>(false);
     const [passwordError, setPasswordError] = useState<boolean>(false);
 
     const [loading, setLoading] = useState<boolean>(false);
@@ -56,11 +58,15 @@ export default function PasswordForm({showModal, handleClose, folderOptions, ini
             setWebsiteError(true);
         }
 
+        if (!username.length) {
+            setUsernameError(true);
+        }
+
         if (!password.length) {
             setPasswordError(true);
         }
 
-        if (website.length && password && folder) {
+        if (website.length && username.length && password.length && folder) {
             /* TODO ENCRYPT PASSWORD BEFORE CREATING */
             try {
                 setLoading(true);
@@ -68,11 +74,13 @@ export default function PasswordForm({showModal, handleClose, folderOptions, ini
                     website: website,
                     hash: password,
                     description: description,
+                    username: username,
                     folderId: folderOptions.find(f => f.name === folder)?.id
                 }).then(() => {
                     handleClose(true);
                     setLoading(false);
                     setWebsite("");
+                    setUsername("");
                     setPassword("");
                     setDescription("");
                     setFolder(initFolder);
@@ -108,6 +116,18 @@ export default function PasswordForm({showModal, handleClose, folderOptions, ini
                     onChange={(e) => {
                         setWebsite(e.target.value)
                         setWebsiteError(false);
+                    }}
+                />
+
+                <TextField
+                    id="username-input"
+                    label="Username"
+                    helperText="Requires input"
+                    error={usernameError}
+                    required
+                    onChange={(e) => {
+                        setUsername(e.target.value);
+                        setUsernameError(false);
                     }}
                 />
 

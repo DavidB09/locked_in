@@ -6,6 +6,7 @@ const schema = a.schema({
       hash: a.string(),
       website: a.string(),
       description: a.string(),
+      username: a.string(),
       folderId: a.id(),
       folder: a.belongsTo('Folder', 'folderId'),
     })
