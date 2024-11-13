@@ -31,14 +31,20 @@ export default function Card({name, username, description, pwd, folder, selectUp
     return (
         <div className="card">
 
-            {/* <Box sx={{display: "flex", justifyContent: "flex-start"}}> */}
-            <Accordion sx={{width: "100%"}}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}
-                sx={{display: "flex", justifyContent: "flex-start"}}
-                >
+            <Box sx={{display: "flex"}}>
+            <Accordion sx={{ boxShadow: 0}}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon /> }>
                 <Typography>{name} - {folder} </Typography>
-                <IconButton
-                    sx={{bgcolor: "#153042", marginLeft: 'auto'}}
+                </AccordionSummary>
+                <AccordionDetails>
+                <Typography >
+                    {description}
+                </Typography>
+                </AccordionDetails>
+            </Accordion>
+            <Box sx={{marginLeft: 'auto'}}>
+            <IconButton 
+                    sx={{bgcolor: "#153042", marginRight: "5px"}}
                     onClick={selectUpdate}
                 >
                     <CreateIcon fontSize='small' sx={{color: "white"}}/>
@@ -49,13 +55,9 @@ export default function Card({name, username, description, pwd, folder, selectUp
                 >
                     <DeleteIcon fontSize='small' sx={{color: "white"}}/>
                 </IconButton>
-                </AccordionSummary>
-                <AccordionDetails>
-                <Typography>
-                    {description}
-                </Typography>
-                </AccordionDetails>
-            </Accordion>
+
+            </Box>
+            
                 {/* <h3 className="site-name">{name} - {folder}</h3>
                 <IconButton
                     sx={{bgcolor: "#153042", marginLeft: 'auto'}}
@@ -69,7 +71,7 @@ export default function Card({name, username, description, pwd, folder, selectUp
                 >
                     <DeleteIcon fontSize='small' sx={{color: "white"}}/>
                 </IconButton> */}
-            {/* </Box> */}
+            </Box>
             <div className="password-group">
                 <FormControl>
                     <InputLabel htmlFor='display-username'>Username</InputLabel>
