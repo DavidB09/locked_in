@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 
 import { VisibilityOff, Visibility } from "@mui/icons-material";
-import { OutlinedInput, IconButton, Box, InputLabel, FormControl } from "@mui/material";
+import { OutlinedInput, IconButton, Box, InputLabel, FormControl, AccordionSummary, Accordion, AccordionDetails, Typography } from "@mui/material";
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CreateIcon from '@mui/icons-material/Create';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 interface cardProps {
     name: string,
@@ -29,8 +30,13 @@ export default function Card({name, username, description, pwd, folder, selectUp
 
     return (
         <div className="card">
-            <Box sx={{display: "flex", justifyContent: "flex-start"}}>
-                <h3 className="site-name">{name} - {folder}</h3>
+
+            {/* <Box sx={{display: "flex", justifyContent: "flex-start"}}> */}
+            <Accordion sx={{width: "100%"}}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}
+                sx={{display: "flex", justifyContent: "flex-start"}}
+                >
+                <Typography>{name} - {folder} </Typography>
                 <IconButton
                     sx={{bgcolor: "#153042", marginLeft: 'auto'}}
                     onClick={selectUpdate}
@@ -43,7 +49,27 @@ export default function Card({name, username, description, pwd, folder, selectUp
                 >
                     <DeleteIcon fontSize='small' sx={{color: "white"}}/>
                 </IconButton>
-            </Box>
+                </AccordionSummary>
+                <AccordionDetails>
+                <Typography>
+                    {description}
+                </Typography>
+                </AccordionDetails>
+            </Accordion>
+                {/* <h3 className="site-name">{name} - {folder}</h3>
+                <IconButton
+                    sx={{bgcolor: "#153042", marginLeft: 'auto'}}
+                    onClick={selectUpdate}
+                >
+                    <CreateIcon fontSize='small' sx={{color: "white"}}/>
+                </IconButton>
+                <IconButton 
+                    sx={{bgcolor: "#153042"}}
+                    onClick={selectDelete}
+                >
+                    <DeleteIcon fontSize='small' sx={{color: "white"}}/>
+                </IconButton> */}
+            {/* </Box> */}
             <div className="password-group">
                 <FormControl>
                     <InputLabel htmlFor='display-username'>Username</InputLabel>
@@ -77,7 +103,7 @@ export default function Card({name, username, description, pwd, folder, selectUp
                     {copied ? <CheckIcon sx={{color: "green"}}/> : "Copy"}
                 </button>
             </div>
-            <div className="password-group">
+            {/* <div className="password-group">
                 <FormControl>
                     <InputLabel htmlFor='display-description'>Description</InputLabel>
                     <OutlinedInput 
@@ -90,7 +116,7 @@ export default function Card({name, username, description, pwd, folder, selectUp
                         sx={{bgcolor: "#f6f6f6"}} 
                     />
                 </FormControl>
-            </div>
+            </div> */}
         </div>
     )
 }
