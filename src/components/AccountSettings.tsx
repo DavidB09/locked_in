@@ -123,7 +123,7 @@ export default function AccountSettings({currUsername, handleUpdate}: Props) {
                         color="secondary" 
                         onClick={() => handlePasswordSubmit()}
                         disabled={loadingPassword}
-                        sx={{bgcolor: "#f6f6f6", color: "#000"}}
+                        sx={{bgcolor: "#f6f6f6", color: "#000", margin: "15px 0"}}
                     >
                         {loadingPassword ? <CircularProgress /> : 'Submit' }
                     </Button>
