@@ -4,6 +4,8 @@ import {
     Box, 
     Button, 
     CircularProgress, 
+    IconButton, 
+    InputAdornment, 
     MenuItem, 
     Modal, 
     TextField
@@ -13,6 +15,7 @@ import { NotificationContext, NotificationType } from '../components/Notificatio
 
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../amplify/data/resource';
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 type Folder = Schema['Folder']['type'];
 type Password = Schema['Password']['type'];
 
@@ -35,7 +38,7 @@ const style = {
     bgcolor: 'background.paper',
     border: '2px solid #000',
     boxShadow: 24,
-    p: 4,
+    p: 3
 };
 
 export default function PasswordForm({showModal, handleClose, folders, initFolder, currPassword}: addProps) {
@@ -45,6 +48,7 @@ export default function PasswordForm({showModal, handleClose, folders, initFolde
     const [description, setDescription] = useState<string>("");
     const [folder, setFolder] = useState<string>("");
     const [folderOptions, setFolderOptions] = useState<Folder[]>([]);
+    const [reveal, setVisibility] = useState<boolean>(false);
 
     const [websiteError, setWebsiteError] = useState<boolean>(false);
     const [usernameError, setUsernameError] = useState<boolean>(false);
@@ -52,11 +56,15 @@ export default function PasswordForm({showModal, handleClose, folders, initFolde
     const [folderError, setFolderError] = useState<boolean>(false);
 
     const [loading, setLoading] = useState<boolean>(false);
+    const handleVisibility = () => {
+        setVisibility((reveal) => !reveal)
+    }
 
     const { setNotification } = useContext(NotificationContext);
 
     useEffect(() => {
         setFolderOptions(folders);
+        setVisibility(false)
 
         console.log(initFolder);
 
@@ -168,10 +176,11 @@ export default function PasswordForm({showModal, handleClose, folders, initFolde
             aria-describedby="modal-modal-password-form"
         >
             <Box sx={style}>
+            <Box sx={{margin: "10px", display: "flex", justifyContent: "space-between"}}>
                 <TextField
                     id="website-input"
                     label="Website"
-                    helperText="Requires input"
+                    
                     error={websiteError}
                     required
                     value={website}
@@ -179,47 +188,13 @@ export default function PasswordForm({showModal, handleClose, folders, initFolde
                         setWebsite(e.target.value)
                         setWebsiteError(false);
                     }}
-                />
-
-                <TextField
-                    id="username-input"
-                    label="Username"
-                    helperText="Requires input"
-                    error={usernameError}
-                    required
-                    value={username}
-                    onChange={(e) => {
-                        setUsername(e.target.value);
-                        setUsernameError(false);
-                    }}
-                />
-
-                <TextField
-                    id="password-input"
-                    label="Password"
-                    helperText="Requires input"
-                    error={passwordError}
-                    required
-                    value={password}
-                    onChange={(e) => {
-                        setPassword(e.target.value);
-                        setPasswordError(false);
-                    }}
-                />
-
-                <TextField
-                    id="description-input"
-                    label="Description"
-                    value={description}
-                    multiline
-                    rows={3}
-                    onChange={(e) => setDescription(e.target.value)}
+                    
                 />
 
                 <TextField
                     id="folder-input"
                     label="Folder"
-                    helperText="Requires input"
+                    
                     error={folderError}
                     value={folder ?? initFolder}
                     onChange={(e) => {
@@ -228,6 +203,7 @@ export default function PasswordForm({showModal, handleClose, folders, initFolde
                     }}
                     select
                     required
+                    
                 >
                     {folderOptions.map((folder) => (
                         <MenuItem key={folder.id} value={folder.id!}>
@@ -236,11 +212,67 @@ export default function PasswordForm({showModal, handleClose, folders, initFolde
                     ))}
                 </TextField>
 
+                </Box>
+
+                <TextField
+                    id="username-input"
+                    label="Username"
+                    
+                    error={usernameError}
+                    required
+                    value={username}
+                    onChange={(e) => {
+                        setUsername(e.target.value);
+                        setUsernameError(false);
+                    }}
+                    sx={{margin: "10px", display: "block"}}
+                />
+
+                <TextField
+                    id="password-input"
+                    label="Password"
+                    type= {reveal ? "text" : "password"}
+
+                    
+                    error={passwordError}
+                    required
+                    value={password}
+                    onChange={(e) => {
+                        setPassword(e.target.value);
+                        setPasswordError(false);
+                    }}
+                    slotProps={{
+                        input: {
+                          endAdornment: 
+                          <InputAdornment position="end">
+                            <IconButton
+                            onClick={handleVisibility}
+                        
+                          >
+                            {reveal ? <VisibilityOff /> : <Visibility />}
+                          </IconButton>
+                          </InputAdornment>,   
+                        }}}
+                      
+                    sx={{margin: "10px", display: "block"}}
+                />
+                
+                <TextField
+                    id="description-input"
+                    label="Description"
+                    value={description}
+                    multiline
+                    rows={3}
+                    onChange={(e) => setDescription(e.target.value)}
+                    sx={{margin: "10px", display: "block"}}
+                    
+                />
                 <Button 
                     variant="contained" 
                     color="secondary" 
                     onClick={() => handleSubmit()}
                     disabled={loading}
+                    sx={{margin: "10px", display: "block"}}
                 >
                     {loading ? <CircularProgress /> : 'Submit' }
                 </Button>

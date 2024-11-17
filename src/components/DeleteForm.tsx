@@ -137,6 +137,7 @@ export default function DeleteForm({showModal, currEntity, isFolder, handleClose
                     <p>WARNING, deleting the folder will also delete all passwords located in folder. Please move them if this is unwanted.</p>
                 }
 
+                <Box display={"flex"} justifyContent={"flex-start"} gap={"5px"}>
                 <Button 
                     variant="contained" 
                     color="secondary" 
@@ -154,6 +155,7 @@ export default function DeleteForm({showModal, currEntity, isFolder, handleClose
                 >
                     {loading ? <CircularProgress /> : 'Confirm' }
                 </Button>
+                </Box>
             </Box>
         </Modal>
     )

@@ -160,7 +160,7 @@ export default function Folders({folderList, passwordList, updateFolders, update
                             folders.map(folder => (
                                 <Box key={folder.id} sx={{ cursor: 'pointer' }}>
                                     <Paper elevation={5} sx={{width:"25vh", height: "30vh", bgcolor: "#21435A"}}>
-                                        <Box sx={{display: "flex", justifyContent: "center"}}>
+                                        <Box sx={{display: "flex", justifyContent: "center", gap: "5px"}}>
                                             <IconButton
                                                 sx={{bgcolor: "#153042"}}
                                                 onClick={() => {
@@ -188,7 +188,7 @@ export default function Folders({folderList, passwordList, updateFolders, update
                                         >
                                             <img 
                                                 src={FolderIcon}
-                                                style={{height:"20vh", width:"20vh", objectFit: "contain"}} 
+                                                style={{height:"20vh", width:"20vh", objectFit: "contain", margin: "auto"}} 
                                             />
                                             <Typography 
                                                 variant="h6" 

@@ -33,6 +33,8 @@ const style = {
     border: '2px solid #000',
     boxShadow: 24,
     p: 4,
+    display: "flex",
+    justifyContent: "space-evenly"
 };
 
 export default function FolderForm({showModal, currFolder, handleClose}: addProps) {
@@ -110,7 +112,6 @@ export default function FolderForm({showModal, currFolder, handleClose}: addProp
                 <TextField
                     id="name-input"
                     label="Name"
-                    helperText="Requires input"
                     error={nameError}
                     required
                     value={name}
@@ -118,6 +119,7 @@ export default function FolderForm({showModal, currFolder, handleClose}: addProp
                         setName(e.target.value)
                         setNameError(false);
                     }}
+                    
                 />
 
                 <Button 

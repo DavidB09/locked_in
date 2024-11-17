@@ -66,15 +66,16 @@ export default function Websites({folderList, passwordList, updatePasswords}: Pr
             <div className="header">
                 <Search setSearch={setSearch}></Search>
 
-                <div style={{ display: 'flex', backgroundColor: '#fff', color: '#000', margin: "2vh 2vh", }}>
-                    <p>Folder: </p>
+                <Box sx={{ display: 'flex', color: '#000', margin: "auto", padding: "0 10px"}}>
+                    <p style={{marginRight: "10px", color: "white"}}>Folder: </p>
                     <TextField
                         id="folder-input"
                         value={folderFilter}
                         onChange={(e) => setFolderFilter(e.target.value)}
                         select
                         required
-                        sx={{ margin: "2vh 2vh", backgroundColor: '#fff' }} 
+                        sx={{bgcolor: "white", borderRadius: "10px"}}
+                     
                     >
                         <MenuItem value={'All'}>
                             All
@@ -85,7 +86,7 @@ export default function Websites({folderList, passwordList, updatePasswords}: Pr
                             </MenuItem>
                         ))}
                     </TextField>
-                </div>
+                </Box>
             </div>
 
             <Box
