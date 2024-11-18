@@ -98,29 +98,27 @@ export default function AccountSettings({currUsername, handleUpdate}: Props) {
             </div>
 
             <div className="cards-container">
-                <Paper sx={{ height: "50vh", width: "100%", padding: "10px"}}>
+                <Paper sx={{ height: "100%", width: "100%", padding: "10px"}}>
                     <Box margin={"2vh 0"}>
+                    
                     <TextField
+                    variant="filled"
                             id="username-input"
                             label="Username"
                             value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            onChange={(e) => {
+                                setUsername(e.target.value)}
+                            }
+                            onKeyDown={(e) => {
+                                if (e.key == "Enter")
+                                    handleUsernameSubmit()
+                            }}
                             sx={{bgcolor: "#f6f6f6"}}
                         />
-                        <Button
-                            variant="contained" 
-                            color="secondary" 
-                            onClick={() => handleUsernameSubmit()}
-                            disabled={loadingUsername}
-                            sx={{marginLeft: "10px", marginTop: "10px"}}
-                        
-                        >
-                            {loadingUsername ? <CircularProgress /> : 'Submit' }
-                        </Button>
-
                     </Box>
-                    <Box display={"flex"} justifyContent={"space-between"} flexDirection={"column"} gap={1}>
+                    <Box display={"flex"} justifyContent={"space-between"} flexDirection={"column"} gap={1} width={"100%"}>
                     <TextField
+                            variant='filled'
                             id="currpassword-input"
                             label="Current Password"                            
                             error={currPasswordError}
@@ -145,10 +143,10 @@ export default function AccountSettings({currUsername, handleUpdate}: Props) {
                                 }}}
                         />
                         <TextField
+                            variant='filled'
                             id="password-input"
                             label="New Password"
                             type={reveal ? "text" : "password"}
-                            helperText="Requires input"
                             error={newPasswordError}
                             required
                             onChange={(e) => {
@@ -174,6 +172,7 @@ export default function AccountSettings({currUsername, handleUpdate}: Props) {
                             variant="contained" 
                             color="secondary" 
                             onClick={() => handlePasswordSubmit()}
+
                             disabled={loadingPassword}
                             sx={{margin: "15px 0"}}
                         >

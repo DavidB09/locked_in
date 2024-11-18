@@ -6,6 +6,7 @@ import {
     Paper, 
     Grid2,
     Typography,
+    Button,
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -144,22 +145,24 @@ export default function Folders({folderList, passwordList, updateFolders, update
                 :
                 <>
                     <Box
-                        width={"40vw"} 
+                        width={"41vw"} 
                         height={"5vh"} 
-                        justifyContent={"right"}  
+                        justifyContent={"left"}  
                         display={"flex"} 
-                        margin={"5vh 0 10px 0"} 
+                        margin={"5vh 0 10px 10%"} 
                         columnGap={"1vw"}
                     >
-                        <IconButton onClick={() => setShowFolderForm(true)} sx={{bgcolor: "#153042"}}>
+                        <Button variant="contained" color="primary" onClick={() => setShowFolderForm(true)} >
+                            New Folder
+                        </Button>
+                        {/* <IconButton sx={{bgcolor: "#153042"}}>
                             <AddIcon fontSize='small' sx={{color: "white"}}/>
-                        </IconButton>
+                        </IconButton> */}
                     </Box>
                     <Grid2 container spacing={2} margin={"0 10%"}>
                         {
                             folders.map(folder => (
-                                <Box key={folder.id} sx={{ cursor: 'pointer' }}>
-                                    <Paper elevation={5} sx={{width:"25vh", height: "30vh", bgcolor: "#21435A"}}>
+                                <Box key={folder.id} sx={{ cursor: 'pointer', width:"25vh", height: "30vh"}}>
                                         <Box sx={{display: "flex", justifyContent: "center", gap: "5px"}}>
                                             <IconButton
                                                 sx={{bgcolor: "#153042"}}
@@ -200,7 +203,6 @@ export default function Folders({folderList, passwordList, updateFolders, update
                                                 {folder.name}
                                             </Typography>
                                         </Box>
-                                    </Paper> 
                                 </Box>
                             ))
                         }

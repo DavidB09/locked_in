@@ -57,20 +57,6 @@ export default function Card({name, username, description, pwd, folder, selectUp
                 </IconButton>
 
             </Box>
-            
-                {/* <h3 className="site-name">{name} - {folder}</h3>
-                <IconButton
-                    sx={{bgcolor: "#153042", marginLeft: 'auto'}}
-                    onClick={selectUpdate}
-                >
-                    <CreateIcon fontSize='small' sx={{color: "white"}}/>
-                </IconButton>
-                <IconButton 
-                    sx={{bgcolor: "#153042"}}
-                    onClick={selectDelete}
-                >
-                    <DeleteIcon fontSize='small' sx={{color: "white"}}/>
-                </IconButton> */}
             </Box>
             <div className="password-group">
                 <FormControl>
@@ -82,15 +68,15 @@ export default function Card({name, username, description, pwd, folder, selectUp
                         label='Username'
                         value={username} 
                         readOnly={true}
-                        sx={{bgcolor: "#f6f6f6"}} 
+                        sx={{bgcolor: "#f6f6f6",
+                        }} 
                     />
                 </FormControl>
             </div>
             <div className="password-group">
                 <OutlinedInput 
                     size='small' 
-                    type={reveal ? 'text' : 'password'} 
-                    value={pwd} 
+                    value={reveal ? pwd : "•••••••••••"} 
                     readOnly={true}
                     sx={{bgcolor: "#f6f6f6"}}
                 />
@@ -105,20 +91,6 @@ export default function Card({name, username, description, pwd, folder, selectUp
                     {copied ? <CheckIcon sx={{color: "green"}}/> : "Copy"}
                 </button>
             </div>
-            {/* <div className="password-group">
-                <FormControl>
-                    <InputLabel htmlFor='display-description'>Description</InputLabel>
-                    <OutlinedInput 
-                        id='display-description'
-                        size='small' 
-                        type='text'
-                        label='Description'
-                        value={description} 
-                        readOnly={true}
-                        sx={{bgcolor: "#f6f6f6"}} 
-                    />
-                </FormControl>
-            </div> */}
         </div>
     )
 }
