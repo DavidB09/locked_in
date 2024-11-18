@@ -20,6 +20,7 @@ import FolderForm from "./FolderForm";
 
 import type { Schema } from '../../amplify/data/resource';
 import DeleteForm from "./DeleteForm";
+import FolderCard from "./FolderCard";
 type Folder = Schema['Folder']['type'];
 type Password = Schema['Password']['type'];
 
@@ -160,50 +161,8 @@ export default function Folders({folderList, passwordList, updateFolders, update
                         </IconButton> */}
                     </Box>
                     <Grid2 container spacing={2} margin={"0 10%"}>
-                        {
-                            folders.map(folder => (
-                                <Box key={folder.id} sx={{ cursor: 'pointer', width:"25vh", height: "30vh"}}>
-                                        <Box sx={{display: "flex", justifyContent: "center", gap: "5px"}}>
-                                            <IconButton
-                                                sx={{bgcolor: "#153042"}}
-                                                onClick={() => {
-                                                    setCurrFolder(folder);
-                                                    setShowFolderForm(true);
-                                                }}
-                                            >
-                                                <CreateIcon fontSize='small' sx={{color: "white"}}/>
-                                            </IconButton>
-                                            <IconButton 
-                                                sx={{bgcolor: "#153042"}}
-                                                onClick={() => {
-                                                    setCurrFolder(folder);
-                                                    setShowDeleteFolder(true);
-                                                }}
-                                            >
-                                                <DeleteIcon fontSize='small' sx={{color: "white"}}/>
-                                            </IconButton>
-                                        </Box>
-                                        <Box 
-                                            sx={{display: "flex", flexDirection: 'column', justifyContent: "center"}}
-                                            onClick={() => {
-                                                handleOpenFolder(folder);
-                                            }}
-                                        >
-                                            <img 
-                                                src={FolderIcon}
-                                                style={{height:"20vh", width:"20vh", objectFit: "contain", margin: "auto"}} 
-                                            />
-                                            <Typography 
-                                                variant="h6" 
-                                                display={"block"} 
-                                                textAlign={"center"} 
-                                                textTransform={"none"} 
-                                                color="white"
-                                            >
-                                                {folder.name}
-                                            </Typography>
-                                        </Box>
-                                </Box>
+                    {folders.map(folder => (
+                                <FolderCard folder={folder} updateFolders={updateFolders} handleOpenFolder={handleOpenFolder} setCurrentFolder={setCurrFolder} showDeleteFolder={setShowDeleteFolder}/>
                             ))
                         }
                     </Grid2>

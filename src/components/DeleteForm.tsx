@@ -131,10 +131,10 @@ export default function DeleteForm({showModal, currEntity, isFolder, handleClose
             aria-describedby="modal-modal-delete"
         >
             <Box sx={style}>
-                <p>Please confirm deletion</p>
+                <p style={{fontWeight: "Bold"}}>Please confirm deletion</p>
                 {
                     isFolder &&
-                    <p>WARNING, deleting the folder will also delete all passwords located in folder. Please move them if this is unwanted.</p>
+                    <p>Deleting the folder will also delete all passwords located in folder.</p>
                 }
 
                 <Box display={"flex"} justifyContent={"flex-start"} gap={"5px"}>
