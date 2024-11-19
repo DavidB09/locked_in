@@ -17,6 +17,8 @@
     "@mui/material": "^6.1.6",
     "aws-amplify": "^6.7.0",
     "locked_in": "file:",
+    "crypto-js": "^4.2.0",
+    "@types/crypto-js": "^3.1.47",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.28.0"
