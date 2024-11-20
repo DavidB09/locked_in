@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 
-import { fetchUserAttributes, signOut, type FetchUserAttributesOutput } from 'aws-amplify/auth';
+import { fetchUserAttributes, signOut, updateUserAttribute, type FetchUserAttributesOutput } from 'aws-amplify/auth';
 
 import Websites from '../components/Websites';
 import Folders from '../components/Folders';
@@ -45,7 +45,12 @@ export default function Dashboard () {
     async function fetchUserInfo() {
         try {
             fetchUserAttributes().then(result => {
+                console.log(result);
                 setUserAttributes(result);
+
+                if (!result["custom:ukey"]) {
+                    createUserKey();
+                }
             });
         } catch (err) {
             setNotification({
@@ -53,6 +58,25 @@ export default function Dashboard () {
                 msg: 'User attributes were not loaded, please try again'
             });
         }
+    }
+
+    async function createUserKey() {
+        await client.queries.generateKey({}).then(({data: uKey}) => {
+            console.log(uKey);
+
+            updateUserAttribute({
+                userAttribute: {
+                    attributeKey: "custom:ukey",
+                    value: uKey!,
+                }
+            }).catch(() => {
+                console.log("ERROR");
+                createUserKey();
+            });
+        }).catch(() => {
+            console.log("ERROR");
+            createUserKey();
+        });
     }
 
     async function fetchFolders() {

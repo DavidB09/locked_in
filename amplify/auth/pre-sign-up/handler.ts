@@ -1,30 +1,32 @@
 import { updateUserAttribute } from "aws-amplify/auth"
-import type { PreSignUpTriggerHandler } from "aws-lambda"
+import type { PostAuthenticationTriggerHandler } from "aws-lambda"
 import { PBKDF2, lib } from "crypto-js"
 
 function generateKey() {
+    let salt = lib.WordArray.random(128/8)
 
-    var salt = lib.WordArray.random(128/8)
-
-    var key = PBKDF2("Password", salt, { keySize: 256/32, iterations: 100})
+    let key = PBKDF2("Password", salt, { keySize: 256/32, iterations: 100})
 
     console.log("Hello");
+    console.log(key.toString());
 
     return key.toString();
-
 }
 
-export const handler: PreSignUpTriggerHandler = async (event) => {
-  const uniqueKey = generateKey();
+export const handler: PostAuthenticationTriggerHandler = async (event) => {
+    const uniqueKey = generateKey();
 
-  updateUserAttribute({
-    userAttribute: {
-        attributeKey: "custom:uniqueKey",
-        value: uniqueKey,
-    }
-  });
+    console.log("HELLOOOOOO");
+
+    updateUserAttribute({
+        userAttribute: {
+            attributeKey: "custom:unique_key",
+            value: uniqueKey,
+        }
+    });
   
-  console.log(uniqueKey);
-  throw new Error("It worked: " + uniqueKey);
-  return event
+    throw new Error("CHEESSE!!")
+    console.log(uniqueKey);
+    console.log("It worked: " + uniqueKey);
+    return event;
 }

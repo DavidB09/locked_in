@@ -3,6 +3,7 @@ import { auth } from './auth/resource';
 import { data } from './data/resource';
 import { encryptPassword } from './functions/encrypt-password/resource'
 import { decryptPassword } from './functions/decrypt-password/resource'
+import { generateKey } from './functions/generate-key/resource'
 
 /**
  * @see https://docs.amplify.aws/react/build-a-backend/ to add storage, functions, and more
@@ -12,4 +13,5 @@ defineBackend({
   data,
   encryptPassword,
   decryptPassword,
+  generateKey,
 });

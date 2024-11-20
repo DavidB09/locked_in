@@ -17,10 +17,10 @@ export const auth = defineAuth({
     address: {
       mutable: true,
       required: false,
+    },
+    "custom:ukey": {
+      dataType: "String",
+      mutable: true,
     }
   },
-  triggers: {
-    preSignUp
-  }
-  
 });

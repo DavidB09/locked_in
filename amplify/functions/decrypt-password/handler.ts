@@ -6,11 +6,16 @@ export const handler: Handler = async (event, context) => {
   // your function code goes here
 
   var { hash } = event.arguments;
-  var attributes = await fetchUserAttributes();
+  let password = await fetchUserAttributes().then(result => {
+    console.log(result);
+    const decryptedPass = AES.decrypt(hash, (result).address as string).toString();
 
-  console.log(attributes);
+    console.log(decryptedPass)
+    return decryptedPass;
+  });
+  //var attributes = await fetchUserAttributes();
 
-  var password = AES.decrypt(hash, (await attributes).address as string).toString();
+  //var password = AES.decrypt(hash, (await attributes).address as string).toString();
 
   return password;
 };
