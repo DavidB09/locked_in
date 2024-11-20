@@ -3,10 +3,15 @@ import { OutlinedInput, IconButton } from "@mui/material";
 import CheckIcon from '@mui/icons-material/Check';
 import React, { useState } from "react";
 
+import { type Schema } from '../../amplify/data/resource';
+import { generateClient } from 'aws-amplify/data';
+
 interface cardProps {
     name: string,
     pwd: string
-}
+  }
+
+  const client = generateClient<Schema>();
 
 export default function Card({name, pwd}: cardProps) {
     const [reveal, setVisibility] = useState<boolean>(false);
@@ -15,7 +20,7 @@ export default function Card({name, pwd}: cardProps) {
         setVisibility((reveal) => !reveal)
       }
     const handleCopy = () => {
-        navigator.clipboard.writeText(pwd)
+        navigator.clipboard.writeText(client.queries.decrypt({ hash: pwd }).toString())
         setCopy(true)
     }
 

@@ -14,11 +14,9 @@ export const auth = defineAuth({
       mutable: true,
       required: false,
     },
-    "custom:uniqueKey": {
-      dataType: "String",
+    address: {
       mutable: true,
-      minLen: 32,
-      maxLen: 32,
+      required: false,
     }
   },
   triggers: {

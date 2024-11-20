@@ -26,7 +26,8 @@ const schema = a.schema({
       password: a.string(),
     })
     .returns(a.string())
-    .handler(a.handler.function(encryptPassword)),
+    .handler(a.handler.function(encryptPassword))
+    .authorization((allow) => [allow.authenticated()]),
 
     decrypt: a
     .query()
@@ -34,7 +35,8 @@ const schema = a.schema({
       hash: a.string(),
     })
     .returns(a.string())
-    .handler(a.handler.function(decryptPassword)),
+    .handler(a.handler.function(decryptPassword))
+    .authorization((allow) => [allow.authenticated()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;

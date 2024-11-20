@@ -69,10 +69,12 @@ export default function PasswordForm({showModal, handleClose, folderOptions, ini
         if (website.length && username.length && password.length && folder) {
             /* TODO ENCRYPT PASSWORD BEFORE CREATING */
             try {
+
+                var newPass = (await client.queries.encrypt({ password: password }).toString());
                 setLoading(true);
                 client.models.Password.create({
                     website: website,
-                    hash: password,
+                    hash: newPass,
                     description: description,
                     username: username,
                     folderId: folderOptions.find(f => f.name === folder)?.id
@@ -88,6 +90,8 @@ export default function PasswordForm({showModal, handleClose, folderOptions, ini
                         type: NotificationType.Success,
                         msg: 'Password was saved!'
                     });
+
+                    console.log(password);
                 });
             } catch (err) {
                 setNotification({
