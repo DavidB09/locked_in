@@ -1,21 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react';
 
-import { fetchUserAttributes, signOut, type FetchUserAttributesOutput } from 'aws-amplify/auth';
+import { fetchUserAttributes, signOut, updateUserAttribute, type FetchUserAttributesOutput } from 'aws-amplify/auth';
 
 import Websites from '../components/Websites';
 import Folders from '../components/Folders';
+import AccountSettings from '../components/AccountSettings';
 
 import { NotificationContext, NotificationModal, NotificationType } from '../components/NotificationModal';
 
 import '../styles/dashboard.css'
+import { CircularProgress } from '@mui/material';
 
 import { generateClient } from 'aws-amplify/data';
 import { type Schema } from '../../amplify/data/resource';
-import { CircularProgress } from '@mui/material';
-import AccountSettings from '../components/AccountSettings';
 type Folder = Schema['Folder']['type'];
 type Password = Schema['Password']['type'];
-
 const client = generateClient<Schema>();
 
 enum PageOptions {
@@ -43,24 +42,49 @@ export default function Dashboard () {
     }, []);
 
     async function fetchUserInfo() {
+        // Load user attributes
         fetchUserAttributes().then(result => {
             setUserAttributes(result);
+
+            // Generate unique phrase
+            if (!result["custom:ukey"]) {
+                createUserKey();
+            }
         }).catch(() => {
             setNotification({
                 type: NotificationType.Warning,
-                msg: 'User attributes where not loaded, please try again'
+                msg: 'User attributes were not loaded, please try again'
             });
+        });
+    }
+
+    async function createUserKey() {
+        client.queries.generateKey({}).then(({data: uKey}) => {
+            // Update unique phrase
+            updateUserAttribute({
+                userAttribute: {
+                    attributeKey: "custom:ukey",
+                    value: uKey!,
+                }
+            }).catch(() => {
+                // Retry
+                createUserKey();
+            });
+        }).catch(() => {
+            // Retry
+            createUserKey();
         });
     }
 
     async function fetchFolders() {
         setLoadingFolders(true);
 
+        // Load folders
         client.models.Folder.list({ authMode: 'userPool' }).then(result => {
             const { data: folders } = result; 
-            console.log(folders);
 
             if (folders.length === 0) {
+                // Create a General folder for each user
                 client.models.Folder.create({
                     name: "General",
                 }).then(() => fetchFolders());
@@ -80,12 +104,12 @@ export default function Dashboard () {
     async function fetchPasswords() {
         setLoadingPasswords(true);
 
+        // Load passwords
         client.models.Password.list({ authMode: 'userPool' }).then(result => {
             const { data: passwords } = result;
-            console.log(passwords);
 
-            setPasswords(passwords);
-            setLoadingPasswords(false);
+            // Decrypt the passwords
+            decryptAllPasswords(passwords);
         }).catch(() => {
             setNotification({
                 type: NotificationType.Warning,
@@ -95,9 +119,40 @@ export default function Dashboard () {
         });
     }
 
+    function decryptAllPasswords(passwordList: Password[]) {
+        Promise.all(passwordList
+            .map(async (entity) => {
+                const { data: decryptP } = await fetchUserAttributes().then(result => {
+                    if (!result["custom:ukey"]) {
+                        throw new Error("No user key");
+                    } else {
+                        // Decrypt the password using the unique phrase
+                        return client.queries.decrypt({
+                            hash: entity.hash, 
+                            phrase: result["custom:ukey"]
+                        });
+                    }
+                });
+
+                // Return decrypted password
+                return {
+                    ...entity,
+                    hash: decryptP,
+                } as Password
+            })).then(result => {
+                setPasswords(result);
+                setLoadingPasswords(false);
+            }).catch(() => {
+                setNotification({
+                    type: NotificationType.Warning,
+                    msg: 'Passwords were not loaded, please try again'
+                });
+                setLoadingPasswords(false);
+            });
+    }
+
     return (
         <div className="container">
-            {/* Sidebar */}
             <div className="sidebar">
                 <div className="profile-section">
                     <div className="avatar">
@@ -110,7 +165,6 @@ export default function Dashboard () {
                     </div>
                 </div>
 
-                {/* Side buttons */}
                 <button className="sidebar-button" onClick={() => setView(PageOptions.Websites)}>
                     🌐 All Websites
                 </button>

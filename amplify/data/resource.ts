@@ -1,4 +1,7 @@
 import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
+import { encryptPassword } from "../functions/encrypt-password/resource"
+import { decryptPassword } from "../functions/decrypt-password/resource"
+import { generateKey } from "../functions/generate-key/resource"
 
 const schema = a.schema({
   Password: a
@@ -17,6 +20,33 @@ const schema = a.schema({
       passwords: a.hasMany('Password', 'folderId'),
     })
     .authorization((allow) => [allow.owner()]),
+
+    encrypt: a
+    .query()
+    .arguments({
+      password: a.string(),
+      phrase: a.string(),
+    })
+    .returns(a.string())
+    .handler(a.handler.function(encryptPassword))
+    .authorization((allow) => [allow.authenticated()]),
+
+    decrypt: a
+    .query()
+    .arguments({
+      hash: a.string(),
+      phrase: a.string(),
+    })
+    .returns(a.string())
+    .handler(a.handler.function(decryptPassword))
+    .authorization((allow) => [allow.authenticated()]),
+
+    generateKey: a
+    .query()
+    .arguments({})
+    .returns(a.string())
+    .handler(a.handler.function(generateKey))
+    .authorization((allow) => [allow.authenticated()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;

@@ -51,9 +51,16 @@ export default function FolderForm({showModal, currFolder, handleClose}: addProp
     async function handleSubmit() {
         if (!name.length) {
             setNameError(true);
+        } else if (name === "General") {
+            setNameError(true);
+            setNotification({
+                type: NotificationType.Warning,
+                msg: 'General folder cannot be changed/duplicated!'
+            });
         } else {
             setLoading(true);
 
+            // Check if update
             if (currFolder) {
                 client.models.Folder.update({
                     id: currFolder.id,
@@ -75,6 +82,7 @@ export default function FolderForm({showModal, currFolder, handleClose}: addProp
                     setLoading(false);
                 });
             } else {
+                // Create new folder
                 client.models.Folder.create({
                     name: name
                 }).then(() => {

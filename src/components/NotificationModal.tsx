@@ -25,21 +25,25 @@ export function NotificationModal() {
     const setModalValue = useCallback(async (value: boolean) => {
         setShowModal(value);
         if (!value) {
+            // Hide notification
             setTimeout(() => setNotification({}), 700);
         }
     }, [setShowModal, setNotification]);
 
     const setModalTimeout = useCallback(async () => {
+        // Set timeout to 4 seconds
         setTimeout(() => {
             setModalValue(false);
         }, 4000);
     }, [setModalValue]);
 
     useEffect(() => {
+        // Show notification
         if (notification.msg) setModalValue(true);
     }, [notification, setModalValue]);
 
     useEffect(() => {
+        // Set the timeout
         if (showModal) setModalTimeout();
     }, [showModal, setModalTimeout]); 
 

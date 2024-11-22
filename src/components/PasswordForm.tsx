@@ -10,12 +10,13 @@ import {
     Modal, 
     TextField
 } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import { NotificationContext, NotificationType } from '../components/NotificationModal';
 
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../amplify/data/resource';
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { fetchUserAttributes } from "aws-amplify/auth";
 type Folder = Schema['Folder']['type'];
 type Password = Schema['Password']['type'];
 
@@ -41,7 +42,7 @@ const style = {
     p: 3
 };
 
-export default function PasswordForm({showModal, handleClose, folders, initFolder, currPassword}: addProps) {
+export default function PasswordForm({ showModal, handleClose, folders, initFolder, currPassword }: addProps) {
     const [website, setWebsite] = useState<string>("");
     const [username, setUsername] = useState<string>("");
     const [password, setPassword] = useState<string>("");
@@ -66,8 +67,7 @@ export default function PasswordForm({showModal, handleClose, folders, initFolde
         setFolderOptions(folders);
         setVisibility(false)
 
-        console.log(initFolder);
-
+        // Update the current password
         if (currPassword) {
             setWebsite(currPassword.website!);
             setUsername(currPassword.username!);
@@ -77,10 +77,9 @@ export default function PasswordForm({showModal, handleClose, folders, initFolde
         } else {
             setFolder(initFolder);
         }
-    }, [currPassword, initFolder, folders])
+    }, [currPassword, initFolder, folders]);
 
     async function handleSubmit() {
-        console.log(website, password, description, folder);
         if (!website.length) {
             setWebsiteError(true);
         }
@@ -100,60 +99,85 @@ export default function PasswordForm({showModal, handleClose, folders, initFolde
         if (website.length && username.length && password.length && folder?.length) {
             setLoading(true);
 
-            if (currPassword) {
-                client.models.Password.update({
-                    id: currPassword.id,
-                    website: website,
-                    hash: password,
-                    description: description,
-                    username: username,
-                    folderId: folder
-                }).then(() => {
-                    handleClose(true);
-                    setLoading(false);
-                    setWebsite("");
-                    setUsername("");
-                    setPassword("");
-                    setDescription("");
-                    setFolder(folderOptions.find(f => f.name === 'General')?.id!);
-                    setNotification({
-                        type: NotificationType.Success,
-                        msg: 'Password was saved!'
+            fetchUserAttributes().then(result => {
+                if (!result["custom:ukey"]) {
+                    throw new Error("No user key");
+                } else {
+                    // Encrypt the password using the unique phrase
+                    client.queries.encrypt({ 
+                        password: password, 
+                        phrase: result["custom:ukey"]
+                    }).then(({ data: newPass }) => {
+
+                        // Check if update
+                        if (currPassword) {
+                            client.models.Password.update({
+                                id: currPassword.id,
+                                website: website,
+                                hash: newPass,
+                                description: description,
+                                username: username,
+                                folderId: folder
+                            }).then(() => {
+                                handleClose(true);
+                                setLoading(false);
+                                setWebsite("");
+                                setUsername("");
+                                setPassword("");
+                                setDescription("");
+                                setFolder(folderOptions.find(f => f.name === 'General')?.id!);
+                                setNotification({
+                                    type: NotificationType.Success,
+                                    msg: 'Password was saved!'
+                                });
+                            }).catch(() => {
+                                setNotification({
+                                    type: NotificationType.Warning,
+                                    msg: 'Password was not saved, please try again'
+                                });
+                                setLoading(false);
+                            });
+                        } else {
+                            // Create a new password
+                            client.models.Password.create({
+                                website: website,
+                                hash: newPass,
+                                description: description,
+                                username: username,
+                                folderId: folder
+                            }).then(() => {
+                                handleClose(true);
+                                setLoading(false);
+                                setWebsite("");
+                                setUsername("");
+                                setPassword("");
+                                setDescription("");
+                                setFolder(folderOptions.find(f => f.name === 'General')?.id!);
+                                setNotification({
+                                    type: NotificationType.Success,
+                                    msg: 'Password was saved!'
+                                });
+                            }).catch(() => {
+                                setNotification({
+                                    type: NotificationType.Warning,
+                                    msg: 'Password was not saved, please try again'
+                                });
+                                setLoading(false);
+                            });
+                        }
+                    }).catch(() => {
+                        setNotification({
+                            type: NotificationType.Warning,
+                            msg: 'Password was not saved, please try again'
+                        });
                     });
-                }).catch(() => {
-                    setNotification({
-                        type: NotificationType.Warning,
-                        msg: 'Password was not saved, please try again'
-                    });
-                    setLoading(false);
+                }
+            }).catch(() => {
+                setNotification({
+                    type: NotificationType.Warning,
+                    msg: 'Password was not saved, please try again'
                 });
-            } else {
-                client.models.Password.create({
-                    website: website,
-                    hash: password,
-                    description: description,
-                    username: username,
-                    folderId: folder
-                }).then(() => {
-                    handleClose(true);
-                    setLoading(false);
-                    setWebsite("");
-                    setUsername("");
-                    setPassword("");
-                    setDescription("");
-                    setFolder(folderOptions.find(f => f.name === 'General')?.id!);
-                    setNotification({
-                        type: NotificationType.Success,
-                        msg: 'Password was saved!'
-                    });
-                }).catch(() => {
-                    setNotification({
-                        type: NotificationType.Warning,
-                        msg: 'Password was not saved, please try again'
-                    });
-                    setLoading(false);
-                });
-            }
+            });
         }
     }
 
@@ -176,48 +200,44 @@ export default function PasswordForm({showModal, handleClose, folders, initFolde
             aria-describedby="modal-modal-password-form"
         >
             <Box sx={style}>
-            <Box sx={{margin: "10px", display: "flex", justifyContent: "space-between"}}>
-                <TextField
-                    id="website-input"
-                    label="Website"
-                    
-                    error={websiteError}
-                    required
-                    value={website}
-                    onChange={(e) => {
-                        setWebsite(e.target.value)
-                        setWebsiteError(false);
-                    }}
-                    
-                />
+                <Box sx={{margin: "10px", display: "flex", justifyContent: "space-between"}}>
+                    <TextField
+                        id="website-input"
+                        label="Website"
+                        error={websiteError}
+                        required
+                        value={website}
+                        onChange={(e) => {
+                            setWebsite(e.target.value)
+                            setWebsiteError(false);
+                        }}
+                        
+                    />
 
-                <TextField
-                    id="folder-input"
-                    label="Folder"
-                    
-                    error={folderError}
-                    value={folder ?? initFolder}
-                    onChange={(e) => {
-                        setFolder(e.target.value);
-                        setFolderError(false);
-                    }}
-                    select
-                    required
-                    
-                >
-                    {folderOptions.map((folder) => (
-                        <MenuItem key={folder.id} value={folder.id!}>
-                            {folder.name}
-                        </MenuItem>
-                    ))}
-                </TextField>
-
+                    <TextField
+                        id="folder-input"
+                        label="Folder"
+                        error={folderError}
+                        value={folder ?? initFolder}
+                        onChange={(e) => {
+                            setFolder(e.target.value);
+                            setFolderError(false);
+                        }}
+                        select
+                        required
+                        
+                    >
+                        {folderOptions.map((folder) => (
+                            <MenuItem key={folder.id} value={folder.id!}>
+                                {folder.name}
+                            </MenuItem>
+                        ))}
+                    </TextField>
                 </Box>
 
                 <TextField
                     id="username-input"
                     label="Username"
-                    
                     error={usernameError}
                     required
                     value={username}
@@ -232,8 +252,6 @@ export default function PasswordForm({showModal, handleClose, folders, initFolde
                     id="password-input"
                     label="Password"
                     type= {reveal ? "text" : "password"}
-
-                    
                     error={passwordError}
                     required
                     value={password}
@@ -243,15 +261,14 @@ export default function PasswordForm({showModal, handleClose, folders, initFolde
                     }}
                     slotProps={{
                         input: {
-                          endAdornment: 
-                          <InputAdornment position="end">
-                            <IconButton
-                            onClick={handleVisibility}
-                        
-                          >
-                            {reveal ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                          </InputAdornment>,   
+                            endAdornment:
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        onClick={handleVisibility}
+                                    >
+                                        {reveal ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>,   
                         }}}
                       
                     sx={{margin: "10px", display: "block"}}
@@ -265,8 +282,8 @@ export default function PasswordForm({showModal, handleClose, folders, initFolde
                     rows={3}
                     onChange={(e) => setDescription(e.target.value)}
                     sx={{margin: "10px", display: "block"}}
-                    
                 />
+
                 <Button 
                     variant="contained" 
                     color="secondary" 
