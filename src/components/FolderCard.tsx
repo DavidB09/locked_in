@@ -67,13 +67,26 @@ export default function FolderCard ({
         <Box key={folder.id} sx={{ cursor: 'pointer', width:"25vh", height: "30vh"}}>
             <Box sx={{display: "flex", justifyContent: "flex-end"}}>
                 <IconButton 
-                    sx={{bgcolor: "#153042", top: "30px", position: "relative"}}
+                    sx={{ 
+                        bgcolor: "#153042", 
+                        top: "30px", 
+                        position: "relative",
+                        opacity: folder.name === "General" ? 0 : 1
+                    }}
                     onClick={() => {
+                        if (folder.name === "General") return;
+
                         setCurrentFolder(folder);
                         showDeleteFolder(true);
                     }}
                 >
-                    <DeleteIcon fontSize='small' sx={{color: "white"}}/>
+                    <DeleteIcon 
+                        fontSize='small' 
+                        sx={{
+                            color: "white",
+                            opacity: folder.name === "General" ? 0 : 1
+                        }}
+                    />
                 </IconButton>
             </Box>
             <Box sx={{display: "flex", flexDirection: 'column', justifyContent: "center"}}>
@@ -87,7 +100,7 @@ export default function FolderCard ({
                         style={{ height:"20vh", width:"20vh", objectFit: "contain", margin: "auto" }} 
                     />
                 </Box>
-                <Button onClick={() => setEdit(true)}>
+                <Button onClick={() => folder.name !== "General" && setEdit(true)}>
                     {edit ? 
                         <TextField 
                             variant="standard"
