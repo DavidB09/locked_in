@@ -25,6 +25,7 @@ const schema = a.schema({
     .query()
     .arguments({
       password: a.string(),
+      key: a.string(),
     })
     .returns(a.string())
     .handler(a.handler.function(encryptPassword))
@@ -34,6 +35,7 @@ const schema = a.schema({
     .query()
     .arguments({
       hash: a.string(),
+      key: a.string(),
     })
     .returns(a.string())
     .handler(a.handler.function(decryptPassword))

@@ -1,21 +1,12 @@
-import { fetchUserAttributes } from 'aws-amplify/auth';
 import type { Handler } from 'aws-lambda';
 import { AES } from 'crypto-js';
 
 export const handler: Handler = async (event, context) => {
   // your function code goes here
 
-  var { hash } = event.arguments;
-  let password = await fetchUserAttributes().then(result => {
-    console.log(result);
-    const decryptedPass = AES.decrypt(hash, (result).address as string).toString();
+  const { hash, key } = event.arguments;
 
-    console.log(decryptedPass)
-    return decryptedPass;
-  });
-  //var attributes = await fetchUserAttributes();
-
-  //var password = AES.decrypt(hash, (await attributes).address as string).toString();
+  const password = AES.decrypt(hash, key).toString();
 
   return password;
 };
