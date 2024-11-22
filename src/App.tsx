@@ -26,7 +26,8 @@ export default function App() {
   const theme = createTheme({
     palette: {
       primary: {
-        main: '#153042'
+        main: '#1D2D44',
+        light: '#F0EBD8'
       },
       secondary: { 
           main: '#21435A',
