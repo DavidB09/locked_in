@@ -3,24 +3,20 @@ import React, { useEffect, useState } from "react";
 import {
     Box,
     IconButton,
-    Paper, 
     Grid2,
-    Typography,
     Button,
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import CreateIcon from '@mui/icons-material/Create';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 
 import FolderIcon from '../assets/folder.png'
 import Card from './Cards';
 import PasswordForm from './PasswordForm';
 import FolderForm from "./FolderForm";
-
-import type { Schema } from '../../amplify/data/resource';
 import DeleteForm from "./DeleteForm";
 import FolderCard from "./FolderCard";
+
+import type { Schema } from '../../amplify/data/resource';
 type Folder = Schema['Folder']['type'];
 type Password = Schema['Password']['type'];
 
@@ -52,12 +48,14 @@ export default function Folders({folderList, passwordList, updateFolders, update
     }, [folderList, passwordList]);
 
     function handleOpenFolder(folder: Folder) {
+        // Show all passwords within folder
         setFolderOpen(true);
         setCurrFolder(folder);
         setFolderPasswords(passwords.filter(p => p.folderId === folder.id));
     }
 
     function handleCloseFolder() {
+        // Hide all passwords
         setFolderOpen(false);
         setCurrFolder(undefined);
         setFolderPasswords([]);
@@ -121,24 +119,25 @@ export default function Folders({folderList, passwordList, updateFolders, update
                     <div className="cards-container">
                         {
                             folderPasswords.length ? 
-                                folderPasswords.map((password) => (
-                                    <Card 
-                                        key={password.id} 
-                                        name={password.website!}
-                                        username={password.username!}
-                                        pwd={password.hash!}
-                                        description={password.description!}
-                                        folder={currFolder?.name!}
-                                        selectUpdate={() => {
-                                            setCurrPassword(password);
-                                            setShowPasswordForm(true);
-                                        }}
-                                        selectDelete={() => {
-                                            setCurrPassword(password);
-                                            setShowDeletePassword(true);
-                                        }}
-                                    />
-                                ))
+                                folderPasswords
+                                    .map((password) => (
+                                        <Card 
+                                            key={password.id} 
+                                            name={password.website!}
+                                            username={password.username!}
+                                            pwd={password.hash!}
+                                            description={password.description!}
+                                            folder={currFolder?.name!}
+                                            selectUpdate={() => {
+                                                setCurrPassword(password);
+                                                setShowPasswordForm(true);
+                                            }}
+                                            selectDelete={() => {
+                                                setCurrPassword(password);
+                                                setShowDeletePassword(true);
+                                            }}
+                                        />
+                                    ))
                                 : <p>No websites found</p>
                         }
                     </div>
@@ -156,13 +155,18 @@ export default function Folders({folderList, passwordList, updateFolders, update
                         <Button variant="contained" color="primary" onClick={() => setShowFolderForm(true)} >
                             New Folder
                         </Button>
-                        {/* <IconButton sx={{bgcolor: "#153042"}}>
-                            <AddIcon fontSize='small' sx={{color: "white"}}/>
-                        </IconButton> */}
                     </Box>
                     <Grid2 container spacing={2} margin={"0 10%"}>
-                    {folders.map(folder => (
-                                <FolderCard folder={folder} updateFolders={updateFolders} handleOpenFolder={handleOpenFolder} setCurrentFolder={setCurrFolder} showDeleteFolder={setShowDeleteFolder}/>
+                        {
+                            folders.map(folder => (
+                                <FolderCard
+                                    key={folder.id}
+                                    folder={folder} 
+                                    updateFolders={updateFolders}
+                                    handleOpenFolder={handleOpenFolder}
+                                    setCurrentFolder={setCurrFolder}
+                                    showDeleteFolder={setShowDeleteFolder}
+                                />
                             ))
                         }
                     </Grid2>

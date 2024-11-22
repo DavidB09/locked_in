@@ -5,10 +5,18 @@ import {
     updateUserAttributes, 
 } from 'aws-amplify/auth';
 
-import { Box, Button, CircularProgress, FormHelperText, IconButton, InputAdornment, Paper, TextField } from '@mui/material';
+import {
+    Box,
+    Button,
+    CircularProgress,
+    IconButton,
+    InputAdornment,
+    Paper,
+    TextField
+} from '@mui/material';
+import { VisibilityOff, Visibility } from '@mui/icons-material';
 
 import { NotificationContext, NotificationType } from '../components/NotificationModal';
-import { VisibilityOff, Visibility } from '@mui/icons-material';
 
 interface Props {
     currUsername?: string,
@@ -27,6 +35,7 @@ export default function AccountSettings({currUsername, handleUpdate}: Props) {
     const [loadingUsername, setLoadingUsername] = useState<boolean>(false);
 
     const { setNotification } = useContext(NotificationContext);
+
     const handleVisibility = () => {
         setVisibility((reveal) => !reveal)
     }
@@ -47,6 +56,8 @@ export default function AccountSettings({currUsername, handleUpdate}: Props) {
 
         if (currPassword.length && newPassword.length) {
             setLoadingPassword(true);
+
+            // Update the user password
             updatePassword({
                 oldPassword: currPassword,
                 newPassword: newPassword,
@@ -71,6 +82,7 @@ export default function AccountSettings({currUsername, handleUpdate}: Props) {
     async function handleUsernameSubmit() {
         setLoadingUsername(true);
 
+        // Update the username 
         updateUserAttributes({
             userAttributes: {
                 preferred_username: username
@@ -100,9 +112,8 @@ export default function AccountSettings({currUsername, handleUpdate}: Props) {
             <div className="cards-container">
                 <Paper sx={{ height: "100%", width: "100%", padding: "10px"}}>
                     <Box margin={"2vh 0"}>
-                    
-                    <TextField
-                    variant="filled"
+                        <TextField
+                            variant="filled"
                             id="username-input"
                             label="Username"
                             value={username}
@@ -116,11 +127,17 @@ export default function AccountSettings({currUsername, handleUpdate}: Props) {
                             sx={{bgcolor: "#f6f6f6"}}
                         />
                     </Box>
-                    <Box display={"flex"} justifyContent={"space-between"} flexDirection={"column"} gap={1} width={"100%"}>
-                    <TextField
+                    <Box 
+                        display={"flex"} 
+                        justifyContent={"space-between"}
+                        flexDirection={"column"}
+                        gap={1}
+                        width={"100%"}
+                    >
+                        <TextField
                             variant='filled'
                             id="currpassword-input"
-                            label="Current Password"                            
+                            label="Current Password"
                             error={currPasswordError}
                             type={reveal ? "text" : "password"}
                             required
@@ -128,19 +145,17 @@ export default function AccountSettings({currUsername, handleUpdate}: Props) {
                                 setCurrPassword(e.target.value)
                                 setCurrPasswordError(false);
                             }}
-                            sx={{bgcolor: "#f6f6f6", maxWidth: "50%"}}
+                            sx={{ bgcolor: "#f6f6f6", maxWidth: "50%" }}
                             slotProps={{
                                 input: {
-                                  endAdornment: 
-                                  <InputAdornment position="end">
-                                    <IconButton
-                                    onClick={handleVisibility}
-                                
-                                  >
-                                    {reveal ? <VisibilityOff /> : <Visibility />}
-                                  </IconButton>
-                                  </InputAdornment>,   
-                                }}}
+                                    endAdornment: 
+                                        <InputAdornment position="end">
+                                            <IconButton onClick={handleVisibility}>
+                                                {reveal ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>,   
+                                }
+                            }}
                         />
                         <TextField
                             variant='filled'
@@ -155,30 +170,27 @@ export default function AccountSettings({currUsername, handleUpdate}: Props) {
                             }}
                             slotProps={{
                                 input: {
-                                  endAdornment: 
-                                  <InputAdornment position="end">
-                                    <IconButton
-                                    onClick={handleVisibility}
-                                
-                                  >
-                                    {reveal ? <VisibilityOff /> : <Visibility />}
-                                  </IconButton>
-                                  </InputAdornment>,   
-                                }}}
-                            sx={{bgcolor: "#f6f6f6", maxWidth: "50%"}}
+                                    endAdornment: 
+                                        <InputAdornment position="end">
+                                            <IconButton onClick={handleVisibility}>
+                                                {reveal ? <VisibilityOff /> : <Visibility />}
+                                            </IconButton>
+                                        </InputAdornment>,   
+                                }
+                            }}
+                            sx={{ bgcolor: "#f6f6f6", maxWidth: "50%" }}
                         />
                     </Box>
-                                            <Button
-                            variant="contained" 
-                            color="secondary" 
-                            onClick={() => handlePasswordSubmit()}
+                    <Button
+                        variant="contained" 
+                        color="secondary" 
+                        onClick={() => handlePasswordSubmit()}
 
-                            disabled={loadingPassword}
-                            sx={{margin: "15px 0"}}
-                        >
-                            {loadingPassword ? <CircularProgress /> : 'Submit' }
-                        </Button>
-                    
+                        disabled={loadingPassword}
+                        sx={{margin: "15px 0"}}
+                    >
+                        {loadingPassword ? <CircularProgress /> : 'Submit' }
+                    </Button>
                 </Paper>
             </div>
         </div>

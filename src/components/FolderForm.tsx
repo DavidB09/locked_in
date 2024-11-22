@@ -54,6 +54,7 @@ export default function FolderForm({showModal, currFolder, handleClose}: addProp
         } else {
             setLoading(true);
 
+            // Check if update
             if (currFolder) {
                 client.models.Folder.update({
                     id: currFolder.id,
@@ -75,6 +76,7 @@ export default function FolderForm({showModal, currFolder, handleClose}: addProp
                     setLoading(false);
                 });
             } else {
+                // Create new folder
                 client.models.Folder.create({
                     name: name
                 }).then(() => {

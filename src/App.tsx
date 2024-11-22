@@ -8,6 +8,7 @@ import outputs from "../amplify_outputs.json";
 import imageLogo from './assets/logo.png';
 
 import Dashboard from './pages/Dashboard';
+
 import { NotificationContext, Notification } from "./components/NotificationModal";
 
 import { createTheme, ThemeProvider } from "@mui/material";
@@ -18,49 +19,47 @@ import { createTheme, ThemeProvider } from "@mui/material";
 
 Amplify.configure(outputs);
 const client = generateClient({
-  authMode: "userPool",
+    authMode: "userPool",
 });
 
 export default function App() {
+    const theme = createTheme({
+        palette: {
+            primary: {
+                main: '#1D2D44',
+                light: '#F0EBD8'
+            },
+            secondary: { 
+                main: '#21435A',
+                light: '#58AAE1'
+            },
+        }
+    });
 
-  const theme = createTheme({
-    palette: {
-      primary: {
-        main: '#1D2D44',
-        light: '#F0EBD8'
-      },
-      secondary: { 
-          main: '#21435A',
-          light: '#58AAE1'
-      },
+    const components = {
+        Header() {
+            return (
+                <div style={{textAlign: "center"}}>
+                    <img
+                        src={imageLogo}
+                        style={{width: "50%", height: "50%"}}
+                    />
+                </div>
+            );
+        },
     }
-  });
 
-  const components = {
-    Header() {
-  
-      return (
-        <div  style={{textAlign: "center"}}>
-          <img
-            src={imageLogo}
-            style={{width: "50%", height: "50%"}}
-          />
-        </div>
-      );
-    },
-  }
+    const [notification, setNotification] = useState<Notification>({});
 
-  const [notification, setNotification] = useState<Notification>({});
-
-  return (
-    <Authenticator components={components} signUpAttributes={['preferred_username']}>
-      {() => (
-        <ThemeProvider theme={theme}>
-          <NotificationContext.Provider value={{notification, setNotification}}>
-            <Dashboard />
-          </NotificationContext.Provider>
-        </ThemeProvider>
-      )}
-    </Authenticator>
-  );
+    return (
+        <Authenticator components={components} signUpAttributes={['preferred_username']}>
+            {() => (
+                <ThemeProvider theme={theme}>
+                    <NotificationContext.Provider value={{notification, setNotification}}>
+                        <Dashboard />
+                    </NotificationContext.Provider>
+                </ThemeProvider>
+            )}
+        </Authenticator>
+    );
 }

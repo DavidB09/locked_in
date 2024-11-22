@@ -7,7 +7,7 @@ interface Props {
     setSearch : Dispatch<SetStateAction<string>>
 }
 
-export default function Search ({setSearch} :  Props){
+export default function Search ({ setSearch }: Props){
 
     return (
         <Paper 

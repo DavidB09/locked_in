@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
 import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { Box, Button, IconButton, MenuItem, Paper, TextField} from '@mui/material';
+import { Box, IconButton, MenuItem, TextField} from '@mui/material';
 
 import Search from './SearchBar';
 import Card from './Cards';
 import PasswordForm from './PasswordForm';
+import DeleteForm from './DeleteForm';
 
 import type { Schema } from '../../amplify/data/resource';
-import DeleteForm from './DeleteForm';
 type Folder = Schema['Folder']['type'];
 type Password = Schema['Password']['type'];
 
@@ -20,10 +19,9 @@ interface Props {
 }
 
 export default function Websites({folderList, passwordList, updatePasswords}: Props) {
-    //Do the query here to dynamically display cards that have "site-name" == card in cards
     const [search, setSearch] = useState<string>("");
     const [folderFilter, setFolderFilter] = useState<string>("All");
-    const [folders, setFolders] = useState<Folder[]>([]); //Get the list of websites from the db
+    const [folders, setFolders] = useState<Folder[]>([]);
     const [passwords, setPasswords] = useState<Password[]>([]);
 
     const [currPassword, setCurrPassword] = useState<Password|undefined>();
@@ -31,13 +29,14 @@ export default function Websites({folderList, passwordList, updatePasswords}: Pr
     const [showDeleteForm, setShowDeleteForm] = useState<boolean>(false);
 
     function filterPasswords() {
-        if (!search && folderFilter === 'All') return passwords;
+        if (!search && folderFilter === 'All') return passwords; // Return all passwords
 
+        // Filter for selected folder or search term
         const term = search.toLowerCase().trim();
         return passwords.filter((password) => 
             (!search || password.website && password.website?.toLowerCase().includes(term)) &&
             (folderFilter === 'All' || password.folderId === folderFilter)
-        )
+        );
     }
 
     useEffect(() => {
