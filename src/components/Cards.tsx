@@ -42,7 +42,7 @@ export default function Card({name, username, description, pwd, folder, selectUp
 
     const handleCopy = () => {
         // Copy text to user clipboard
-        navigator.clipboard.writeText(client.queries.decrypt({ hash: pwd }).toString())
+        navigator.clipboard.writeText(pwd)
         setCopy(true)
     }
 
